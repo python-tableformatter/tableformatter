@@ -1,0 +1,22 @@
+# Python development, test, and build
+__pycache__
+build
+dist
+.cache
+*.pyc
+.tox
+.pytest_cache
+
+# Code Coverage
+.coverage
+htmlcov
+
+# PyCharm
+.idea
+
+# Visual Studio Code
+.vscode
+
+# mypy optional static type checker
+.mypy_cache
+*~
