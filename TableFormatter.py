@@ -5,25 +5,52 @@ Formats data into a table
 import enum
 import re
 import textwrap as textw
-from typing import List, Union, Tuple, Iterable, Sized, Container, Generic, TypeVar
+from typing import List, Iterable, Tuple, Union
+
 from wcwidth import wcswidth
+
+# This whole try/except exists to make sure a Collection type exists for use with optional type hinting and isinstance
 try:
+    # Python 3.6+ should have Collection in the typing module
     from typing import Collection
 except ImportError:
-    # noinspection PyAbstractClass
-    class Collection(Generic[TypeVar('T_co', covariant=True)], Container, Sized, Iterable):
-        """hack to enable Collection typing"""
-        __slots__ = ()
+    from typing import Container, Sized
+    import sys
 
-        # noinspection PyPep8Naming
-        @classmethod
-        def __subclasshook__(cls, C):
-            if cls is Collection:
-                if any("__len__" in B.__dict__ for B in C.__mro__) and \
-                        any("__iter__" in B.__dict__ for B in C.__mro__) and \
-                        any("__contains__" in B.__dict__ for B in C.__mro__):
-                    return True
-            return NotImplemented
+    # Unfortunately need slightly different solutions for Python 3.4 vs 3.5
+    if sys.version_info < (3, 5):
+        # Python 3.4
+        # noinspection PyAbstractClass
+        class Collection(Container, Sized, Iterable):
+            """hack to enable Collection typing"""
+            __slots__ = ()
+
+            # noinspection PyPep8Naming
+            @classmethod
+            def __subclasshook__(cls, C):
+                if cls is Collection:
+                    if any("__len__" in B.__dict__ for B in C.__mro__) and \
+                            any("__iter__" in B.__dict__ for B in C.__mro__) and \
+                            any("__contains__" in B.__dict__ for B in C.__mro__):
+                        return True
+                return NotImplemented
+    else:
+        # Python 3.5
+        # noinspection PyAbstractClass
+        from typing import Generic, TypeVar
+        class Collection(Generic[TypeVar('T_co', covariant=True)], Container, Sized, Iterable):
+            """hack to enable Collection typing"""
+            __slots__ = ()
+
+            # noinspection PyPep8Naming
+            @classmethod
+            def __subclasshook__(cls, C):
+                if cls is Collection:
+                    if any("__len__" in B.__dict__ for B in C.__mro__) and \
+                            any("__iter__" in B.__dict__ for B in C.__mro__) and \
+                            any("__contains__" in B.__dict__ for B in C.__mro__):
+                        return True
+                return NotImplemented
 
 
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
