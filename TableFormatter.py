@@ -512,7 +512,7 @@ class AlternatingRowGrid(object):
 
 
 class SparseGrid(object):
-    """Fancy table with grid lines dividing rows and columns"""
+    """Sparse grid with no lines at all and no alternating background colors"""
     can_wrap = True
     show_header = False
 
