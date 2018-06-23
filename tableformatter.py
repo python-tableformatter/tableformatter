@@ -14,43 +14,22 @@ try:
     # Python 3.6+ should have Collection in the typing module
     from typing import Collection
 except ImportError:
-    from typing import Container, Sized
-    import sys
+    from typing import Container, Generic, Sized, TypeVar
+    # Python 3.5
+    # noinspection PyAbstractClass
+    class Collection(Generic[TypeVar('T_co', covariant=True)], Container, Sized, Iterable):
+        """hack to enable Collection typing"""
+        __slots__ = ()
 
-    # Unfortunately need slightly different solutions for Python 3.4 vs 3.5
-    if sys.version_info < (3, 5):
-        # Python 3.4
-        # noinspection PyAbstractClass
-        class Collection(Container, Sized, Iterable):
-            """hack to enable Collection typing"""
-            __slots__ = ()
-
-            # noinspection PyPep8Naming
-            @classmethod
-            def __subclasshook__(cls, C):
-                if cls is Collection:
-                    if any("__len__" in B.__dict__ for B in C.__mro__) and \
-                            any("__iter__" in B.__dict__ for B in C.__mro__) and \
-                            any("__contains__" in B.__dict__ for B in C.__mro__):
-                        return True
-                return NotImplemented
-    else:
-        # Python 3.5
-        # noinspection PyAbstractClass
-        from typing import Generic, TypeVar
-        class Collection(Generic[TypeVar('T_co', covariant=True)], Container, Sized, Iterable):
-            """hack to enable Collection typing"""
-            __slots__ = ()
-
-            # noinspection PyPep8Naming
-            @classmethod
-            def __subclasshook__(cls, C):
-                if cls is Collection:
-                    if any("__len__" in B.__dict__ for B in C.__mro__) and \
-                            any("__iter__" in B.__dict__ for B in C.__mro__) and \
-                            any("__contains__" in B.__dict__ for B in C.__mro__):
-                        return True
-                return NotImplemented
+        # noinspection PyPep8Naming
+        @classmethod
+        def __subclasshook__(cls, C):
+            if cls is Collection:
+                if any("__len__" in B.__dict__ for B in C.__mro__) and \
+                        any("__iter__" in B.__dict__ for B in C.__mro__) and \
+                        any("__contains__" in B.__dict__ for B in C.__mro__):
+                    return True
+            return NotImplemented
 
 
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
@@ -302,6 +281,44 @@ class TableColors(object):
             BG_RESET = ''
             BOLD = ''
             RESET = ''
+
+    @classmethod
+    def set_color_library(cls, library_name: str) -> None:
+        """Manually override the color library being used."""
+        if library_name == 'colored':
+            from colored import fg, bg, attr
+
+            cls.TEXT_COLOR_WHITE = fg('white')
+            cls.TEXT_COLOR_YELLOW = fg(226)
+            cls.TEXT_COLOR_RED = fg(196)
+            cls.TEXT_COLOR_GREEN = fg(119)
+            cls.TEXT_COLOR_BLUE = fg(27)
+            cls.BG_COLOR_ROW = bg(234)
+            cls.BG_RESET = bg(0)
+            cls.BOLD = attr('bold')
+            cls.RESET = attr('reset')
+        elif library_name == 'colorama':
+            from colorama import Fore, Back, Style
+
+            cls.TEXT_COLOR_WHITE = Fore.WHITE
+            cls.TEXT_COLOR_YELLOW = Fore.LIGHTYELLOW_EX
+            cls.TEXT_COLOR_RED = Fore.LIGHTRED_EX
+            cls.TEXT_COLOR_GREEN = Fore.LIGHTGREEN_EX
+            cls.TEXT_COLOR_BLUE = Fore.LIGHTBLUE_EX
+            cls.BG_COLOR_ROW = Back.LIGHTBLACK_EX
+            cls.BG_RESET = Back.RESET
+            cls.BOLD = Style.BRIGHT
+            cls.RESET = Fore.RESET + Back.RESET
+        else:
+            cls.TEXT_COLOR_WHITE = ''
+            cls.TEXT_COLOR_YELLOW = ''
+            cls.TEXT_COLOR_RED = ''
+            cls.TEXT_COLOR_GREEN = ''
+            cls.TEXT_COLOR_BLUE = ''
+            cls.BG_COLOR_ROW = ''
+            cls.BG_RESET = ''
+            cls.BOLD = ''
+            cls.RESET = ''
 
 
 class ColumnAlignment(enum.Enum):
