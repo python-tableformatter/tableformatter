@@ -11,14 +11,25 @@ import tableformatter as tf
 def empty_text():
     return ''
 
-
 @pytest.fixture
 def sample_text():
     return 'FooBar'
 
 @pytest.fixture
+def long_text():
+    return 'FooBarBaz'
+
+@pytest.fixture
 def tabbed_text():
     return 'Foo\tBar'
+
+@pytest.fixture
+def multiline_text():
+    return 'FooBar\nBaz'
+
+@pytest.fixture
+def whitespace_text():
+    return 'FooBar  \n    '
 
 
 # Test text wrapping
@@ -35,6 +46,26 @@ def test_no_wrap(sample_text):
 def test_simple_wrap(sample_text):
     expected = ['Foo', 'Bar']
     wrapped = tf._text_wrap(sample_text, width=3)
+    assert expected == wrapped
+
+def test_double_wrap(long_text):
+    expected = ['Foo', 'Bar', 'Baz']
+    wrapped = tf._text_wrap(long_text, width=3)
+    assert expected == wrapped
+
+def test_multiline_no_wrap(multiline_text):
+    expected = ['FooBar Baz']
+    wrapped = tf._text_wrap(multiline_text)
+    assert expected == wrapped
+
+def test_multiline_with_wrap(multiline_text):
+    expected = ['Foo', 'Bar', 'Baz']
+    wrapped = tf._text_wrap(multiline_text, width=3)
+    assert expected == wrapped
+
+def test_trailing_whitespace_wrap(whitespace_text):
+    expected = ['FooBar']
+    wrapped = tf._text_wrap(whitespace_text)
     assert expected == wrapped
 
 
