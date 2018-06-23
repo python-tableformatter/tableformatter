@@ -1,5 +1,6 @@
 tableformatter: tabular data formatter
 ======================================
+[![Latest Version](https://img.shields.io/pypi/v/tableformatter.svg?style=flat-square&label=latest%20stable%20version)](https://pypi.org/project/tableformatter/)
 [![Build status](https://api.travis-ci.com/python-tableformatter/tableformatter.svg?branch=master)](https://travis-ci.com/python-tableformatter/tableformatter)
 [![codecov](https://codecov.io/gh/python-tableformatter/tableformatter/branch/master/graph/badge.svg)](https://codecov.io/gh/python-tableformatter/tableformatter)
 
