@@ -5,6 +5,10 @@ It converts your data into a string form suitable for pretty-printing as a table
 for developers to display tabular data in an aesthetically pleasing fashion.  It provides a simple public API, but allows
 fine-grained control over almost every aspect of how the data is formatted.
 
+Many other modules for formatting tabular data require the developer to create a transition layer to convert their
+objects/data into a structure the formatter can consume.  One relatively novel aspect of tableformatter is the ability to directly
+receive arbitrary Python objects.
+
 Main Features
 -------------
 - Easy to display simple tables with just one function call when you don't need the fine-grained control
