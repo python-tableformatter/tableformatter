@@ -34,6 +34,7 @@ except ImportError:
 
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
 TAB_WIDTH = 4
+__version__ = '0.1.0'
 
 
 def _text_wrap(text, width=70):
