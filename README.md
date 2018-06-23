@@ -33,8 +33,8 @@ Dependencies
 unicode strings rendered to a terminal.
 
 If you wish to use the optional support for color, then at least one of the following two modules must be installed:
-* [colorama](https://github.com/tartley/colorama)
-* [colored](https://github.com/dslackw/colored)
+* [colorama](https://github.com/tartley/colorama) - simple cross-platform colored terminal text with about 16 colors
+* [colored](https://github.com/dslackw/colored) - library for color in terminal with 256 colors, macOS and Linux only
 
 If both ``colorama`` and ``colored`` are installed, then ``colored`` will take precedence.
 
