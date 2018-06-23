@@ -16,6 +16,7 @@ Main Features
 - Good unicode support including for characters which are more than 1 visual character wide
 - Support for Python 3.4+ on Windows, macOS, and Linux
 
+
 Installation
 ============
 ```Bash
@@ -24,12 +25,13 @@ pip install tableformatter
 
 Dependencies
 ------------
-``tableformatter`` requires that at least one of the following two modules are installed to support table colors:
+``tableformatter`` does not have any required dependencies.
+
+However, if you wish to use the provided optional support for color, then at least one of the following two modules must be installed:
 * [colorama](https://github.com/tartley/colorama)
 * [colored](https://github.com/dslackw/colored)
 
-**pip** will treat ``colorama`` as a dependency and install if it isn't already installed.  However, if ``colored`` is
-installed, then it will be used instead of ``colorama``.
+If both ``colorama`` and ``colored`` are installed, then ``colored`` will take precedence.
 
 
 Usage

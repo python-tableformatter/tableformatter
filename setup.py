@@ -30,15 +30,12 @@ Programming Language :: Python :: Implementation :: CPython
 Topic :: Software Development :: Libraries :: Python Modules
 """.splitlines())))
 
-INSTALL_REQUIRES = ['colorama']
-
 EXTRAS_REQUIRE = {
     # POSIX OSes also require wcwidth for correctly estimating the displayed width of unicode chars
     ":sys_platform!='win32'": ['wcwidth'],
-    # Python 3.4 and earlier require contextlib2 for temporarily redirecting stderr and stdout
+    # Python 3.4 and earlier the typing module backport for optional type hinting support
     ":python_version<'3.5'": ['typing'],
-    # development only dependencies
-    # install with 'pip install -e .[dev]'
+    # development only dependencies - install with 'pip install -e .[dev]'
     'dev': [
         'pytest', 'pytest-cov', 'tox', 'pylint', 'sphinx', 'sphinx-rtd-theme',
         'sphinx-autobuild', 'invoke', 'twine>=1.11',
@@ -59,6 +56,5 @@ setup(
     py_modules = ['TableFormatter'],
     keywords='table tabular formatter',
     python_requires='>=3.4',
-    install_requires=INSTALL_REQUIRES,
     extras_require=EXTRAS_REQUIRE,
 )
