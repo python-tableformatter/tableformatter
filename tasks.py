@@ -56,7 +56,7 @@ namespace_clean.add_task(pytest_clean, 'pytest')
 @invoke.task
 def mypy(context):
     "Run mypy optional static type checker"
-    context.run("mypy main.py")
+    context.run("mypy tableformatter.py")
     namespace.add_task(mypy)
 namespace.add_task(mypy)
 
@@ -80,38 +80,6 @@ def tox_clean(context):
     #pylint: disable=unused-argument
     rmrf('.tox')
 namespace_clean.add_task(tox_clean, 'tox')
-
-
-#####
-#
-# documentation
-#
-#####
-DOCS_SRCDIR = 'docs'
-DOCS_BUILDDIR = os.path.join('docs', '_build')
-
-@invoke.task()
-def docs(context, builder='html'):
-    "Build documentation using sphinx"
-    cmdline = 'python -msphinx -M {} {} {}'.format(builder, DOCS_SRCDIR, DOCS_BUILDDIR)
-    context.run(cmdline)
-namespace.add_task(docs)
-
-@invoke.task
-def docs_clean(context):
-    "Remove rendered documentation"
-    #pylint: disable=unused-argument
-    rmrf(DOCS_BUILDDIR)
-namespace_clean.add_task(docs_clean, name='docs')
-
-@invoke.task
-def livehtml(context):
-    "Launch webserver on http://localhost:8000 with rendered documentation"
-    builder = 'html'
-    outputdir = os.path.join(DOCS_BUILDDIR, builder)
-    cmdline = 'sphinx-autobuild -b {} {} {}'.format(builder, DOCS_SRCDIR, outputdir)
-    context.run(cmdline, pty=True)
-namespace.add_task(livehtml)
 
 
 #####

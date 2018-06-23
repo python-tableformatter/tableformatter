@@ -37,8 +37,7 @@ EXTRAS_REQUIRE = {
     ":python_version<'3.5'": ['typing'],
     # development only dependencies - install with 'pip install -e .[dev]'
     'dev': [
-        'pytest', 'pytest-cov', 'tox', 'pylint', 'sphinx', 'sphinx-rtd-theme',
-        'sphinx-autobuild', 'invoke', 'twine>=1.11',
+        'pytest', 'pytest-cov', 'tox', 'invoke', 'twine>=1.11', 'setuptools>=39.1', 'wheel>=0.31'
     ]
 }
 
