@@ -303,6 +303,44 @@ class TableColors(object):
             BOLD = ''
             RESET = ''
 
+    @classmethod
+    def set_color_library(cls, library_name: str) -> None:
+        """Manually override the color library being used."""
+        if library_name == 'colored':
+            from colored import fg, bg, attr
+
+            cls.TEXT_COLOR_WHITE = fg('white')
+            cls.TEXT_COLOR_YELLOW = fg(226)
+            cls.TEXT_COLOR_RED = fg(196)
+            cls.TEXT_COLOR_GREEN = fg(119)
+            cls.TEXT_COLOR_BLUE = fg(27)
+            cls.BG_COLOR_ROW = bg(234)
+            cls.BG_RESET = bg(0)
+            cls.BOLD = attr('bold')
+            cls.RESET = attr('reset')
+        elif library_name == 'colorama':
+            from colorama import Fore, Back, Style
+
+            cls.TEXT_COLOR_WHITE = Fore.WHITE
+            cls.TEXT_COLOR_YELLOW = Fore.LIGHTYELLOW_EX
+            cls.TEXT_COLOR_RED = Fore.LIGHTRED_EX
+            cls.TEXT_COLOR_GREEN = Fore.LIGHTGREEN_EX
+            cls.TEXT_COLOR_BLUE = Fore.LIGHTBLUE_EX
+            cls.BG_COLOR_ROW = Back.LIGHTBLACK_EX
+            cls.BG_RESET = Back.RESET
+            cls.BOLD = Style.BRIGHT
+            cls.RESET = Fore.RESET + Back.RESET
+        else:
+            cls.TEXT_COLOR_WHITE = ''
+            cls.TEXT_COLOR_YELLOW = ''
+            cls.TEXT_COLOR_RED = ''
+            cls.TEXT_COLOR_GREEN = ''
+            cls.TEXT_COLOR_BLUE = ''
+            cls.BG_COLOR_ROW = ''
+            cls.BG_RESET = ''
+            cls.BOLD = ''
+            cls.RESET = ''
+
 
 class ColumnAlignment(enum.Enum):
     """Column alignment"""
