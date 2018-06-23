@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from TableFormatter import generate_table, FancyGrid, SparseGrid
+from tableformatter import generate_table, FancyGrid, SparseGrid
 """
 Simple demonstration of TableFormatter with a list of tuples as table entries.
 TableFormatter will automatically expand the row height to handle multi-line entries.
