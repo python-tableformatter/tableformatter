@@ -1,5 +1,8 @@
 tableformatter: tabular data formatter
 ======================================
+[![Build status](https://api.travis-ci.com/python-tableformatter/tableformatter.svg?branch=master)](https://travis-ci.com/python-tableformatter/tableformatter)
+[![codecov](https://codecov.io/gh/python-tableformatter/tableformatter/branch/master/graph/badge.svg)](https://codecov.io/gh/python-tableformatter/tableformatter)
+
 tableformatter is a tabular data formatter allowing printing from both arbitrary tuples of strings or object inspection.
 It converts your data into a string form suitable for pretty-printing as a table.  The goal is to make it quick and easy
 for developers to display tabular data in an aesthetically pleasing fashion.  It provides a simple public API, but allows
