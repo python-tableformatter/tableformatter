@@ -50,13 +50,13 @@ to this function is ``rows`` which is an Iterable of Iterables such as a list of
 a 2D [numpy](http://www.numpy.org) array.  ``generate_table`` outputs a nicely formatted table:
 
 ```Python
->>> from tableformatter import generate_table
+from tableformatter import generate_table
 
->>> rows = [('A1', 'A2', 'A3', 'A4'),
-...         ('B1', 'B2\nB2\nB2', 'B3', 'B4'),
-...         ('C1', 'C2', 'C3', 'C4'),
-...         ('D1', 'D2', 'D3', 'D4')]
->>> print(generate_table(rows))
+rows = [('A1', 'A2', 'A3', 'A4'),
+        ('B1', 'B2\nB2\nB2', 'B3', 'B4'),
+        ('C1', 'C2', 'C3', 'C4'),
+        ('D1', 'D2', 'D3', 'D4')]
+print(generate_table(rows))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ║ B1 │ B2 │ B3 │ B4 ║
@@ -74,8 +74,8 @@ Column Headers
 The second argument to ``generate_table`` named ``columns`` is optional and defines a list of column headers to be used.
 
 ```Python
->>> cols = ['Col1', 'Col2', 'Col3', 'Col4']
->>> print(generate_table(rows, cols))
+cols = ['Col1', 'Col2', 'Col3', 'Col4']
+print(generate_table(rows, cols))
 ╔══════╤══════╤══════╤══════╗
 ║ Col1 │ Col2 │ Col3 │ Col4 ║
 ╠══════╪══════╪══════╪══════╣
@@ -99,9 +99,9 @@ Supported grid sytles are:
 * **SparseGrid** - sparse grid with no lines at all to conserve both vertical and horizontal space
 
 ```Python
->>> from tableformatter import FancyGrid
+from tableformatter import FancyGrid
 
->>> print(generate_table(rows, grid_style=FancyGrid))
+print(generate_table(rows, grid_style=FancyGrid))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ╟────┼────┼────┼────╢
@@ -122,7 +122,7 @@ this and print "rows" up-to-down and "columns" left-to-right then that is easily
 to ``generate_table``:
 
 ```Python
->>> print(generate_table(rows, cols, transpose=True))
+print(generate_table(rows, cols, transpose=True))
 ╔══════╦════╤════╤════╤════╗
 ║ Col1 ║ A1 │ B1 │ C1 │ D1 ║
 ║ Col2 ║ A2 │ B2 │ C2 │ D2 ║

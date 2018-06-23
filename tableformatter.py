@@ -37,7 +37,7 @@ TAB_WIDTH = 4
 __version__ = '0.1.0'
 
 
-def _text_wrap(text, width=70):
+def _text_wrap(text: str, width: int=70) -> List[str]:
     """Wrap a single paragraph of text, returning a list of wrapped lines.
 
     Reformat the single paragraph in 'text' so it fits in lines of no
@@ -225,7 +225,7 @@ class _TableTextWrapper(textw.TextWrapper):
         return lines
 
 
-def _translate_tabs(text):
+def _translate_tabs(text: str) -> str:
     """Translate tab characters into spaces for measurement"""
     tabpos = text.find('\t')
     while tabpos >= 0:
@@ -239,7 +239,7 @@ def _translate_tabs(text):
     return text
 
 
-def _printable_width(text):
+def _printable_width(text: str) -> int:
     """Returns the printable width of a string accounting for escape characters and wide-display unicode characters"""
     return _wcswidth(_translate_tabs(text))
 
