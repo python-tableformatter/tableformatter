@@ -1,6 +1,6 @@
 # coding=utf-8
 """
-Unit testing of tableformatter utility functtions.
+Unit testing of tableformatter utility functions.
 """
 import pytest
 
