@@ -41,7 +41,7 @@ to this function is ``rows`` which is an Iterable of Iterables such as a list of
 a 2D [numpy](http://www.numpy.org) array.  ``generate_table`` outputs a nicely formatted table:
 
 ```Python
->>> from TableFormatter import generate_table
+>>> from tableformatter import generate_table
 
 >>> rows = [('A1', 'A2', 'A3', 'A4'),
 ...         ('B1', 'B2\nB2\nB2', 'B3', 'B4'),
@@ -57,6 +57,8 @@ a 2D [numpy](http://www.numpy.org) array.  ``generate_table`` outputs a nicely f
 ║ D1 │ D2 │ D3 │ D4 ║
 ╚════╧════╧════╧════╝
 ```
+
+*NOTE: Rendering of tables looks much better in Python than it appears in this Markdown file.*
 
 Column Headers
 --------------
@@ -88,7 +90,7 @@ Supported grid sytles are:
 * **SparseGrid** - sparse grid with no lines at all to conserve both vertical and horizontal space
 
 ```Python
->>> from TableFormatter import FancyGrid
+>>> from tableformatter import FancyGrid
 
 >>> print(generate_table(rows, grid_style=FancyGrid))
 ╔════╤════╤════╤════╗

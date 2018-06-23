@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from TableFormatter import generate_table, FancyGrid, SparseGrid, Column
+from tableformatter import generate_table, FancyGrid, SparseGrid, Column
 
 """
 Simple demonstration of TableFormatter with a list of objects for the table entries.
