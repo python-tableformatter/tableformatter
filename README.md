@@ -25,9 +25,10 @@ pip install tableformatter
 
 Dependencies
 ------------
-``tableformatter`` does not have any required dependencies.
+``tableformatter`` depends on the [wcwidth](https://github.com/jquast/wcwidth) module for measuring the width of 
+unicode strings rendered to a terminal.
 
-However, if you wish to use the provided optional support for color, then at least one of the following two modules must be installed:
+If you wish to use the optional support for color, then at least one of the following two modules must be installed:
 * [colorama](https://github.com/tartley/colorama)
 * [colored](https://github.com/dslackw/colored)
 
