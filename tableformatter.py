@@ -683,6 +683,24 @@ def Column(col_name: str,
         return col_name, opts
 
 
+def Row(*args, text_color: TableColors=None):
+    """
+    Processes row options and generates a tuple in the format the TableFormatter expects
+    :param args: Can be either 1 object or a list of values
+    :param text_color: text color to use when displaying this row
+    :return: Tuple formatted for the TableFormatter to consume
+    """
+    opts = dict()
+
+    if text_color is not None:
+        opts[TableFormatter.ROW_OPT_TEXT_COLOR] = text_color
+
+    row = list(args)
+    if opts:
+        row.append(opts)
+    return tuple(row)
+
+
 class TableFormatter(object):
     """
     Simple implementation of an ascii table formatter.
@@ -926,7 +944,10 @@ class TableFormatter(object):
                     # skip extra values beyond the columns configured
                     if column_index < len(self._columns):
                         formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_FIELD_FORMATTER)
-                        if formatter is not None and callable(formatter):
+                        obj_formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_OBJECT_FORMATTER)
+                        if obj_formatter is not None and callable(obj_formatter):
+                            field_string = obj_formatter(entry)
+                        elif formatter is not None and callable(formatter):
                             field_string = formatter(field, )
                         elif isinstance(field, str):
                             field_string = field
