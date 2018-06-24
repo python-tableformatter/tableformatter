@@ -10,6 +10,7 @@ import tableformatter as tf
 
 # Make the test results reproducible regardless of what color libraries are installed
 tf.TableColors.set_color_library('none')
+tf.set_default_grid(tf.AlternatingRowGrid('', ''))
 
 WITH_HEADER = '''
 ╔══════╤══════╤══════╤══════╗
@@ -91,7 +92,7 @@ def test_basic_fancy_grid(rows):
 ║ D1 │ D2 │ D3 │ D4 ║
 ╚════╧════╧════╧════╝
 '''.lstrip('\n')
-    table = tf.generate_table(rows, grid_style=tf.FancyGrid)
+    table = tf.generate_table(rows, grid_style=tf.FancyGrid())
     assert table == expected
 
 def test_basic_sparse_grid(rows):
@@ -102,7 +103,7 @@ def test_basic_sparse_grid(rows):
      B2         
  C1  C2  C3  C4 
  D1  D2  D3  D4 \n                \n'''.lstrip('\n')
-    table = tf.generate_table(rows, grid_style=tf.SparseGrid)
+    table = tf.generate_table(rows, grid_style=tf.SparseGrid())
     assert table == expected
 
 def test_table_with_header(rows, cols):
@@ -127,7 +128,7 @@ def test_table_with_header_transposed_fancy(rows, cols):
 ║ Col4 ║ A4 │ B4 │ C4 │ D4 ║
 ╚══════╩════╧════╧════╧════╝
 '''.lstrip('\n')
-    table = tf.generate_table(rows, cols, grid_style=tf.FancyGrid, transpose=True)
+    table = tf.generate_table(rows, cols, grid_style=tf.FancyGrid(), transpose=True)
     assert table == expected
 
 def test_table_with_header_transposed_sparse(rows, cols):
@@ -138,7 +139,7 @@ def test_table_with_header_transposed_sparse(rows, cols):
            B2         
  Col3  A3  B3  C3  D3 
  Col4  A4  B4  C4  D4 \n                      \n'''.lstrip('\n')
-    table = tf.generate_table(rows, cols, grid_style=tf.SparseGrid, transpose=True)
+    table = tf.generate_table(rows, cols, grid_style=tf.SparseGrid(), transpose=True)
     assert table == expected
 
 
@@ -195,7 +196,7 @@ def test_object_table_fancy_grid(obj_rows, obj_cols):
 ║ D1   │ D2   │ D3   │ D4   ║
 ╚══════╧══════╧══════╧══════╝
 '''.lstrip('\n')
-    table = tf.generate_table(obj_rows, obj_cols, grid_style=tf.FancyGrid)
+    table = tf.generate_table(obj_rows, obj_cols, grid_style=tf.FancyGrid())
     assert table == expected
 
 def test_object_table_sparse_grid(obj_rows, obj_cols):
@@ -206,7 +207,7 @@ def test_object_table_sparse_grid(obj_rows, obj_cols):
      B2         
  C1  C2  C3  C4 
  D1  D2  D3  D4 \n                \n'''.lstrip('\n')
-    table = tf.generate_table(obj_rows, obj_cols, grid_style=tf.SparseGrid)
+    table = tf.generate_table(obj_rows, obj_cols, grid_style=tf.SparseGrid())
     assert table == expected
 
 def test_object_table_columns_rearranged(obj_rows):

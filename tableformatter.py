@@ -2,10 +2,11 @@
 """
 Formats data into a table
 """
+import abc
 import enum
 import re
 import textwrap as textw
-from typing import List, Iterable, Tuple, Union
+from typing import List, Iterable, Optional, Tuple, Union
 
 from wcwidth import wcswidth
 
@@ -381,221 +382,206 @@ class WrapMode(enum.Enum):
     TRUNCATE_HARD = 5
 
 
-class FancyGrid(object):
-    """Fancy table with grid lines dividing rows and columns"""
-    can_wrap = True
+class Grid(abc.ABC):
+    """Abstract class representing a table grid which may or may not have lines dividing rows and/or columns."""
+    def __init__(self):
+        self.can_wrap = True
+        self.show_header = False
 
-    show_header = True
+        self.border_top = False
+        self.border_top_left = ''
+        self.border_top_span = ''
+        self.border_top_right = ''
+        self.border_top_col_divider = ''
+        self.border_top_header_col_divider = ''
 
-    border_top = True
-    border_top_left = '╔'
-    border_top_span = '═'
-    border_top_right = '╗'
-    border_top_col_divider = '╤'
-    border_top_header_col_divider = '╦'
+        self.border_header_divider = False
+        self.border_left_header_divider = ''
+        self.border_right_header_divider = ''
+        self.border_header_divider_span = ''
+        self.border_header_col_divider = ''
+        self.border_header_header_col_divider = ''
 
-    border_header_divider = True
-    border_left_header_divider = '╠'
-    border_right_header_divider = '╣'
-    border_header_divider_span = '═'
-    border_header_col_divider = '╪'
-    border_header_header_col_divider = '╬'
+        self.border_left = False
+        self.border_left_row_divider = ''
 
-    border_left = True
+        self.border_right = False
+        self.border_right_row_divider = ''
 
-    @staticmethod
-    def border_left_span(row_index: Union[int, None]):
-        return '║'
-    border_left_row_divider = '╟'
+        self.col_divider = True
+        self.row_divider = False
+        self.row_divider_span = ''
 
-    border_right = True
+        self.row_divider_col_divider = ''
+        self.row_divider_header_col_divider = ''
 
-    @staticmethod
-    def border_right_span(row_index: Union[int, None]):
-        return '║'
-    border_right_row_divider = '╢'
+        self.border_bottom = True
+        self.border_bottom_left = ''
+        self.border_bottom_right = ''
+        self.border_bottom_span = ''
+        self.border_bottom_col_divider = ''
+        self.border_bottom_header_col_divider = ''
 
-    col_divider = True
+        self.cell_pad_char = ' '
 
-    @staticmethod
-    def col_divider_span(row_index: Union[int, None]):
-        return '│'
+    @abc.abstractmethod
+    def border_left_span(self, row_index: Union[int, None]) -> str:
+        return ''
 
-    @staticmethod
-    def header_col_divider_span(row_index: Union[int, None]):
-        return '║'
+    @abc.abstractmethod
+    def border_right_span(self, row_index: Union[int, None]) -> str:
+        return ''
 
-    row_divider = True
-    row_divider_span = '─'
+    @abc.abstractmethod
+    def col_divider_span(self, row_index: Union[int, None]) -> str:
+        return ''
 
-    row_divider_col_divider = '┼'
-    row_divider_header_col_divider = '╫'
+    @abc.abstractmethod
+    def header_col_divider_span(self, row_index: Union[int, None]) -> str:
+        return ''
 
-    border_bottom = True
-    border_bottom_left = '╚'
-    border_bottom_right = '╝'
-    border_bottom_span = '═'
-    border_bottom_col_divider = '╧'
-    border_bottom_header_col_divider = '╩'
-
-    cell_pad_char = ' '
-
-    @staticmethod
-    def cell_format(text):
+    def cell_format(self, text: str) -> str:
         return text
 
 
-class AlternatingRowGrid(object):
-    """Generates alternating black/gray background colors for rows to conserve vertical space"""
-    can_wrap = True
-    show_header = True
+class SparseGrid(Grid):
+    """Very basic sparse table grid, without any lines diving rows or columns or alternating row color.
 
-    border_top = True
-    border_top_left = '╔'
-    border_top_span = '═'
-    border_top_right = '╗'
-    border_top_col_divider = '╤'
-    border_top_header_col_divider = '╦'
+    This conserves both vertical and horizontal space but doesn't look very good in most cases.
+    """
+    def border_left_span(self, row_index: Union[int, None]) -> str:
+        return ''
 
-    border_header_divider = True
-    border_left_header_divider = '╠'
-    border_right_header_divider = '╣'
-    border_header_divider_span = '═'
-    border_header_col_divider = '╪'
-    border_header_header_col_divider = '╬'
+    def border_right_span(self, row_index: Union[int, None]) -> str:
+        return ''
 
-    border_left = True
+    def col_divider_span(self, row_index: Union[int, None]) -> str:
+        return ''
 
-    @staticmethod
-    def border_left_span(row_index: Union[int, None]):
+    def header_col_divider_span(self, row_index: Union[int, None]) -> str:
+        return ''
+
+
+class FancyGrid(Grid):
+    """Fancy table with grid lines dividing rows and columns.
+
+    This typically looks great, but consumes a lot of extra space both horizontally and vertically.
+    """
+    def __init__(self):
+        super().__init__()
+        self.show_header = True
+        self.border_top = True
+
+        self.border_top_left = '╔'
+        self.border_top_span = '═'
+        self.border_top_right = '╗'
+        self.border_top_col_divider = '╤'
+        self.border_top_header_col_divider = '╦'
+
+        self.border_header_divider = True
+        self.border_left_header_divider = '╠'
+        self.border_right_header_divider = '╣'
+        self.border_header_divider_span = '═'
+        self.border_header_col_divider = '╪'
+        self.border_header_header_col_divider = '╬'
+
+        self.border_left = True
+        self.border_left_row_divider = '╟'
+
+        self.border_right = True
+        self.border_right_row_divider = '╢'
+
+        self.col_divider = True
+        self.row_divider = True
+        self.row_divider_span = '─'
+
+        self.row_divider_col_divider = '┼'
+        self.row_divider_header_col_divider = '╫'
+
+        self.border_bottom = True
+        self.border_bottom_left = '╚'
+        self.border_bottom_right = '╝'
+        self.border_bottom_span = '═'
+        self.border_bottom_col_divider = '╧'
+        self.border_bottom_header_col_divider = '╩'
+
+    def border_left_span(self, row_index: Union[int, None]) -> str:
+        return '║'
+
+    def border_right_span(self, row_index: Union[int, None]) -> str:
+        return '║'
+
+    def col_divider_span(self, row_index: Union[int, None]) -> str:
+        return '│'
+
+    def header_col_divider_span(self, row_index: Union[int, None]) -> str:
+        return '║'
+
+
+class AlternatingRowGrid(FancyGrid):
+    """Generates alternating black/gray background colors for rows but still has lines between cols and in header.
+
+    This typically looks quite good, but also does a good job of conserving vertical space.
+    """
+    def __init__(self, bg_reset: str=TableColors.BG_RESET, bg_color: str=TableColors.BG_COLOR_ROW) -> None:
+        """Initialize the AlternatingRowGrid with the two alternating colors.
+
+        :param bg_reset: string reprsenting the default background color
+        :param bg_color: string representing the alternate background color
+        """
+        super().__init__()
+        # Disable row dividers present in FancyGrid in order to save vertical space
+        self.row_divider = False
+        self.row_divider_span = ''
+        self.row_divider_col_divider = ''
+        self.row_divider_header_col_divider = ''
+        self.bg_reset = bg_reset
+        self.bg_color = bg_color
+
+    def border_left_span(self, row_index: Union[int, None]) -> str:
         if isinstance(row_index, int):
             if row_index % 2 == 0:
                 return '║'
             else:
-                return TableColors.BG_RESET + '║' + TableColors.BG_COLOR_ROW
+                return self.bg_reset + '║' + self.bg_color
         return '║'
 
-    border_left_row_divider = '╟'
-
-    border_right = True
-
-    @staticmethod
-    def border_right_span(row_index: Union[int, None]):
+    def border_right_span(self, row_index: Union[int, None]) -> str:
         if isinstance(row_index, int):
             if row_index % 2 == 0:
                 return '║'
             else:
-                return TableColors.BG_RESET + '║'
+                return self.bg_reset + '║'
         return '║'
 
-    border_right_row_divider = '╢'
-
-    col_divider = True
-
-    @staticmethod
-    def col_divider_span(row_index : Union[int, None]):
+    def col_divider_span(self, row_index : Union[int, None]) -> str:
         if isinstance(row_index, int):
             if row_index % 2 == 0:
                 return '│'
             else:
-                return TableColors.BG_RESET + TableColors.BG_COLOR_ROW + '│'
+                return self.bg_reset + self.bg_color + '│'
         return '│'
 
-    @staticmethod
-    def header_col_divider_span(row_index: Union[int, None]):
+    def header_col_divider_span(self, row_index: Union[int, None]) -> str:
         if isinstance(row_index, int):
             if row_index % 2 == 0:
                 return '║'
             else:
-                return TableColors.BG_RESET + TableColors.BG_COLOR_ROW + '║'
+                return self.bg_reset + self.bg_color + '║'
         return '║'
 
-    row_divider = False
-    row_divider_span = ''
 
-    row_divider_col_divider = ''
-    row_divider_header_col_divider = ''
-
-    border_bottom = True
-    border_bottom_left = '╚'
-    border_bottom_right = '╝'
-    border_bottom_span = '═'
-    border_bottom_col_divider = '╧'
-    border_bottom_header_col_divider = '╩'
-
-    cell_pad_char = ' '
-    @staticmethod
-    def cell_format(text):
-        return text
+DEFAULT_GRID = AlternatingRowGrid()
 
 
-class SparseGrid(object):
-    """Sparse grid with no lines at all and no alternating background colors"""
-    can_wrap = True
-    show_header = False
-
-    border_top = False
-    border_top_left = ''
-    border_top_span = ''
-    border_top_right = ''
-    border_top_col_divider = ''
-    border_top_header_col_divider = ''
-
-    border_header_divider = False
-    border_left_header_divider = ''
-    border_right_header_divider = ''
-    border_header_divider_span = ''
-    border_header_col_divider = ''
-    border_header_header_col_divider = ''
-
-    border_left = False
-
-    @staticmethod
-    def border_left_span(row_index: Union[int, None]):
-        return ''
-
-    border_left_row_divider = ''
-
-    border_right = False
-
-    @staticmethod
-    def border_right_span(row_index: Union[int, None]):
-        return ''
-
-    border_right_row_divider = ''
-
-    col_divider = True
-
-    @staticmethod
-    def col_divider_span(row_index: Union[int, None]):
-        return ''
-
-    @staticmethod
-    def header_col_divider_span(row_index: Union[int, None]):
-        return ''
-
-    row_divider = False
-    row_divider_span = ''
-
-    row_divider_col_divider = ''
-    row_divider_header_col_divider = ''
-
-    border_bottom = True
-    border_bottom_left = ''
-    border_bottom_right = ''
-    border_bottom_span = ''
-    border_bottom_col_divider = ''
-    border_bottom_header_col_divider = ''
-
-    cell_pad_char = ' '
-
-    @staticmethod
-    def cell_format(text):
-        return text
+def set_default_grid(grid: Grid) -> None:
+    global DEFAULT_GRID
+    DEFAULT_GRID = grid
 
 
-def generate_table(rows, columns: Collection[Union[str, Tuple[str, dict]]]=None, grid_style=AlternatingRowGrid, transpose=False):
-    """Convenience  function to easily generate a table from rows/columns"""
+def generate_table(rows: Iterable[Iterable], columns: Collection[Union[str, Tuple[str, dict]]]=None,
+                   grid_style: Optional[Grid]=None, transpose: bool=False) -> str:
+    """Convenience function to easily generate a table from rows/columns"""
     show_headers = True
     use_attrib = False
     if isinstance(columns, Collection) and len(columns) > 0:
@@ -618,6 +604,8 @@ def generate_table(rows, columns: Collection[Union[str, Tuple[str, dict]]]=None,
             if len(row) > max_count:
                 max_count = len(row)
         columns = [str(i) for i in range(0, max_count)]
+    if grid_style is None:
+        grid_style = DEFAULT_GRID
     formatter = TableFormatter(columns, grid_style=grid_style, show_header=show_headers,
                                use_attribs=use_attrib, transpose=transpose)
     return formatter.generate_table(rows)
@@ -691,7 +679,7 @@ class TableFormatter(object):
                  default_header_vert_align: ColumnAlignment = ColumnAlignment.AlignBottom,
                  default_cell_horiz_align: ColumnAlignment = ColumnAlignment.AlignLeft,
                  default_cell_vert_align: ColumnAlignment = ColumnAlignment.AlignTop,
-                 grid_style=AlternatingRowGrid,
+                 grid_style=None,
                  show_header=True,
                  use_attribs=False,
                  transpose=False,
@@ -701,7 +689,11 @@ class TableFormatter(object):
         :param cell_padding: number of spaces to pad to the left/right of each column
         """
         self._columns = columns
-        self._grid_style = grid_style
+        if grid_style is None:
+            self._grid_style = DEFAULT_GRID
+        else:
+            self._grid_style = grid_style
+
         self._column_names = []
         self._column_attribs = [None for i in range(len(columns))]
         self._column_opts = {}

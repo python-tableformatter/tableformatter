@@ -102,7 +102,7 @@ Supported grid sytles are:
 ```Python
 from tableformatter import FancyGrid
 
-print(generate_table(rows, grid_style=FancyGrid))
+print(generate_table(rows, grid_style=FancyGrid()))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ╟────┼────┼────┼────╢
