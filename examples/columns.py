@@ -121,19 +121,16 @@ columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.T
            tf.Column('Num 1', attrib='get_field3'),
            tf.Column('Num 2', attrib='field4'),
            tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-
-
 print("First; Truncate Front\n"
       "Second: cell align right, cell padding=5")
 print(tf.generate_table(rows, columns))
+
 
 columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_MIDDLE),
            tf.Column('Second', attrib='field2'),
            tf.Column('Num 1', attrib='get_field3'),
            tf.Column('Num 2', attrib='field4', cell_valign=tf.ColumnAlignment.AlignBottom),
            tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-
-
 print("First: Truncate Middle\nNum 2: cell align bottom")
 print(tf.generate_table(rows, columns))
 
@@ -143,7 +140,5 @@ columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.T
            tf.Column('Num 1', attrib='get_field3'),
            tf.Column('Num 2', attrib='field4', formatter=int2word),
            tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-
-
 print("First: Truncate Hard\nNum 2: Field formatter")
 print(tf.generate_table(rows, columns))
