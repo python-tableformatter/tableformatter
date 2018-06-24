@@ -523,11 +523,11 @@ class AlternatingRowGrid(FancyGrid):
 
     This typically looks quite good, but also does a good job of conserving vertical space.
     """
-    def __init__(self, bg_reset: str=TableColors.BG_RESET, bg_color: str=TableColors.BG_COLOR_ROW) -> None:
+    def __init__(self, bg_primary: str=TableColors.BG_RESET, bg_alternate: str=TableColors.BG_COLOR_ROW) -> None:
         """Initialize the AlternatingRowGrid with the two alternating colors.
 
-        :param bg_reset: string reprsenting the default background color
-        :param bg_color: string representing the alternate background color
+        :param bg_primary: string reprsenting the primary background color starting with the 1st row
+        :param bg_alternate: string representing the alternate background color starting with the 2nd row
         """
         super().__init__()
         # Disable row dividers present in FancyGrid in order to save vertical space
@@ -535,40 +535,40 @@ class AlternatingRowGrid(FancyGrid):
         self.row_divider_span = ''
         self.row_divider_col_divider = ''
         self.row_divider_header_col_divider = ''
-        self.bg_reset = bg_reset
-        self.bg_color = bg_color
+        self.bg_reset = TableColors.BG_RESET
+        self.bg_primary = bg_primary
+        self.bg_alt = bg_alternate
 
     def border_left_span(self, row_index: Union[int, None]) -> str:
+        prefix = self.bg_reset + '║'
+        color = self.bg_reset
         if isinstance(row_index, int):
             if row_index % 2 == 0:
-                return '║'
+                color = self.bg_primary
             else:
-                return self.bg_reset + '║' + self.bg_color
-        return '║'
+                color = self.bg_alt
+        return prefix + color
 
     def border_right_span(self, row_index: Union[int, None]) -> str:
-        if isinstance(row_index, int):
-            if row_index % 2 == 0:
-                return '║'
-            else:
-                return self.bg_reset + '║'
-        return '║'
+        return self.bg_reset + '║'
 
     def col_divider_span(self, row_index : Union[int, None]) -> str:
+        color = self.bg_reset
         if isinstance(row_index, int):
             if row_index % 2 == 0:
-                return '│'
+                color = self.bg_primary
             else:
-                return self.bg_reset + self.bg_color + '│'
-        return '│'
+                color = self.bg_alt
+        return color + '│'
 
     def header_col_divider_span(self, row_index: Union[int, None]) -> str:
+        color = self.bg_reset
         if isinstance(row_index, int):
             if row_index % 2 == 0:
-                return '║'
+                color = self.bg_primary
             else:
-                return self.bg_reset + self.bg_color + '║'
-        return '║'
+                color = self.bg_alt
+        return color + '║'
 
 
 DEFAULT_GRID = AlternatingRowGrid()
