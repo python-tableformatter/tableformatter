@@ -6,7 +6,7 @@ import abc
 import enum
 import re
 import textwrap as textw
-from typing import List, Iterable, Optional, Tuple, Union
+from typing import List, Iterable, Optional, Tuple, Union, Callable
 
 from wcwidth import wcswidth
 
@@ -36,6 +36,7 @@ except ImportError:
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
 TAB_WIDTH = 4
 __version__ = '0.1.0'
+ELLIPSIS = '…'
 
 
 def _text_wrap(text: str, width: int=70) -> List[str]:
@@ -375,11 +376,17 @@ def _pad_columns(text: str, pad_char: str, align: Union[ColumnAlignment, str], w
 class WrapMode(enum.Enum):
     """Cell wrap mode"""
     WRAP = 0
+    """Wraps the cell contents"""
     WRAP_WITH_INDENT = 1
+    """Wraps the cell contents and indents the wrapped lines with string defined in the column's wrap prefix"""
     TRUNCATE_END = 2
+    """Truncates the end of the line with an ellipsis to indicate truncation"""
     TRUNCATE_FRONT = 3
+    """Truncates the beginning of the line with an ellipsis to indicate truncation"""
     TRUNCATE_MIDDLE = 4
+    """Truncates the middle of the line with an ellipsis to indicate truncation"""
     TRUNCATE_HARD = 5
+    """Truncates the end of the line with no truncation indicator"""
 
 
 class Grid(abc.ABC):
@@ -576,7 +583,8 @@ DEFAULT_GRID = AlternatingRowGrid()
 
 def set_default_grid(grid: Grid) -> None:
     global DEFAULT_GRID
-    DEFAULT_GRID = grid
+    if grid is not None:
+        DEFAULT_GRID = grid
 
 
 def generate_table(rows: Iterable[Iterable], columns: Collection[Union[str, Tuple[str, dict]]]=None,
@@ -611,17 +619,35 @@ def generate_table(rows: Iterable[Iterable], columns: Collection[Union[str, Tupl
     return formatter.generate_table(rows)
 
 
-def Column(col_name,
-           width=None,
-           attrib=None,
-           wrap_mode=None,
-           header_halign=None,
-           header_valign=None,
-           cell_halign=None,
-           cell_valign=None,
-           formatter=None,
-           obj_formatter=None):
-    """Convenience function to simplify column definition"""
+def Column(col_name: str,
+           width: int=None,
+           attrib: str=None,
+           wrap_mode: WrapMode=None,
+           wrap_prefix: str=None,
+           cell_padding: int=None,
+           header_halign: ColumnAlignment=None,
+           header_valign: ColumnAlignment=None,
+           cell_halign: ColumnAlignment=None,
+           cell_valign: ColumnAlignment=None,
+           formatter: Callable=None,
+           obj_formatter: Callable=None):
+    """
+    Processes column options and generates a tuple in the format the TableFormatter expects
+
+    :param col_name: Column name to display
+    :param width: Number of displayed terminal characters. Unicode wide characters count as 2 displayed characters.
+    :param attrib: The name of the object attribute to look up for cell contents on this column
+    :param wrap_mode: Defines how to handle long cells that must be wropped or truncated
+    :param wrap_prefix: String to display at the beginning of each wrapped line in a cell
+    :param cell_padding: Number of padding spaces to the left and right of each cell
+    :param header_halign: Horizontal alignment of the column header
+    :param header_valign: Vertical alignment of the column header
+    :param cell_halign: Horizontal alignment of the cells in this column
+    :param cell_valign: Vertical alignment of the cells in this column
+    :param formatter: Callable that can process the value in this column for display.
+    :param obj_formatter: Callable that processes the row object to generate content for this column
+    :return: A column tuple the TableFormatter expects
+    """
     opts = dict()
     if width is not None:
         opts[TableFormatter.COL_OPT_WIDTH] = width
@@ -629,6 +655,10 @@ def Column(col_name,
         opts[TableFormatter.COL_OPT_ATTRIB_NAME] = attrib
     if wrap_mode is not None:
         opts[TableFormatter.COL_OPT_WRAP_MODE] = wrap_mode
+    if wrap_prefix is not None:
+        opts[TableFormatter.COL_OPT_WRAP_INDENT_PREFIX] = wrap_prefix
+    if cell_padding is not None:
+        opts[TableFormatter.COL_OPT_CELL_PADDING] = cell_padding
     if header_halign is not None:
         opts[TableFormatter.COL_OPT_HEADER_HALIGN] = header_halign
     if header_valign is not None:
@@ -685,7 +715,7 @@ class TableFormatter(object):
                  transpose=False,
                  row_show_header=False):
         """
-        :param columns: list of tuples: (column name, [max width])
+        :param columns: list of either column names or tuples of (column name, dict of column options)
         :param cell_padding: number of spaces to pad to the left/right of each column
         """
         self._columns = columns
@@ -1006,12 +1036,15 @@ class TableFormatter(object):
                                                         subsequent_indent=prefix)
                             field_entry.extend(wrapper.wrap(field_line_text))
                         elif wrap_mode == WrapMode.TRUNCATE_END:
-                            field_entry.append(field_line_text[:(line_max - 3)] + '...')
+                            ell_len = _wcswidth(ELLIPSIS)
+                            field_entry.append(field_line_text[:(line_max - ell_len)] + ELLIPSIS)
                         elif wrap_mode == WrapMode.TRUNCATE_FRONT:
-                            field_entry.append('...' + field_line_text[line_length - line_max + 3:])
+                            ell_len = _wcswidth(ELLIPSIS)
+                            field_entry.append(ELLIPSIS + field_line_text[line_length - line_max + ell_len:])
                         elif wrap_mode == WrapMode.TRUNCATE_MIDDLE:
-                            field_entry.append(field_line_text[: (line_max - 5) // 2] + ' ... ' +
-                                               field_line_text[line_length - ((line_max - 5) // 2):])
+                            ell_len = _wcswidth(ELLIPSIS) + 2
+                            field_entry.append(field_line_text[: (line_max - ell_len) // 2] + ' ' + ELLIPSIS + ' ' +
+                                               field_line_text[line_length - ((line_max - ell_len) // 2):])
                         elif wrap_mode == WrapMode.TRUNCATE_HARD:
                             field_entry.append(field_line_text[:line_max])
                         else:
