@@ -587,7 +587,7 @@ def set_default_grid(grid: Grid) -> None:
         DEFAULT_GRID = grid
 
 
-def generate_table(rows: Iterable[Iterable], columns: Collection[Union[str, Tuple[str, dict]]]=None,
+def generate_table(rows: Iterable[Union[Iterable, object]], columns: Collection[Union[str, Tuple[str, dict]]]=None,
                    grid_style: Optional[Grid]=None, transpose: bool=False) -> str:
     """Convenience function to easily generate a table from rows/columns"""
     show_headers = True
@@ -599,8 +599,14 @@ def generate_table(rows: Iterable[Iterable], columns: Collection[Union[str, Tupl
         for column in columns:
             if isinstance(column, tuple) and len(column) > 1 and isinstance(column[1], dict):
                 if TableFormatter.COL_OPT_ATTRIB_NAME in column[1].keys():
+                    # Does this column specify an object attribute to use?
                     attrib = column[1][TableFormatter.COL_OPT_ATTRIB_NAME]
                     if isinstance(attrib, str) and len(attrib) > 0:
+                        attrib_count += 1
+                elif TableFormatter.COL_OPT_OBJECT_FORMATTER in column[1].keys():
+                    # If no column attribute, does this column have an object formatter?
+                    func = column[1][TableFormatter.COL_OPT_OBJECT_FORMATTER]
+                    if callable(func):
                         attrib_count += 1
         if attrib_count == len(columns):
             use_attrib = True
@@ -756,7 +762,8 @@ class TableFormatter(object):
         if use_attribs:
             for col_index, attrib in enumerate(self._column_attribs):
                 if attrib is None:
-                    raise ValueError('Attribute name is required for {}'.format(self._column_names[col_index]))
+                    if TableFormatter.COL_OPT_OBJECT_FORMATTER not in self._column_opts[col_index]:
+                        raise ValueError('Attribute name or Object formatter is required for {}'.format(self._column_names[col_index]))
 
     def set_default_header_alignment(self,
                                      horiz_align: ColumnAlignment = ColumnAlignment.AlignLeft,
@@ -881,7 +888,7 @@ class TableFormatter(object):
 
                 for column_index, attrib_name in enumerate(self._column_attribs):
                     field_obj = None
-                    if hasattr(entry_obj, attrib_name):
+                    if isinstance(attrib_name, str) and hasattr(entry_obj, attrib_name):
                         field_obj = getattr(entry_obj, attrib_name, '')
                         # if the object attribute is callable, go ahead and call it and get the result
                         if callable(field_obj):
