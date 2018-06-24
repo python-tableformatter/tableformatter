@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # coding=utf-8
-from tableformatter import generate_table, FancyGrid, SparseGrid, Column
-
 """
 Simple demonstration of TableFormatter with a list of objects for the table entries.
-This approach requires providing the name of the object attribute to query 
-for each cell (via attrib='attrib_name'). 
+This approach requires providing the name of the object attribute to query
+for each cell (via attrib='attrib_name').
 TableFormatter will check if the attribute is callable. If it is, it wall be called
 and the returned result will be displayed for that cell.
 """
+from tableformatter import generate_table, FancyGrid, SparseGrid, Column
 
 
 class MyRowObject(object):
@@ -44,10 +43,10 @@ print(generate_table(rows, columns, transpose=True))
 
 
 print("Table with header, transposed, FancyGrid:")
-print(generate_table(rows, columns, grid_style=FancyGrid, transpose=True))
+print(generate_table(rows, columns, grid_style=FancyGrid(), transpose=True))
 
 print("Table with header, transposed, SparseGrid:")
-print(generate_table(rows, columns, grid_style=SparseGrid, transpose=True))
+print(generate_table(rows, columns, grid_style=SparseGrid(), transpose=True))
 
 
 columns2 = (Column('Col1', attrib='field3'),
