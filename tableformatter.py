@@ -530,7 +530,7 @@ class AlternatingRowGrid(FancyGrid):
 
     This typically looks quite good, but also does a good job of conserving vertical space.
     """
-    def __init__(self, bg_primary: str=TableColors.BG_RESET, bg_alternate: str=TableColors.BG_COLOR_ROW) -> None:
+    def __init__(self, bg_primary: str=None, bg_alternate: str=None, bg_reset=None) -> None:
         """Initialize the AlternatingRowGrid with the two alternating colors.
 
         :param bg_primary: string reprsenting the primary background color starting with the 1st row
@@ -542,39 +542,52 @@ class AlternatingRowGrid(FancyGrid):
         self.row_divider_span = ''
         self.row_divider_col_divider = ''
         self.row_divider_header_col_divider = ''
-        self.bg_reset = TableColors.BG_RESET
         self.bg_primary = bg_primary
         self.bg_alt = bg_alternate
+        self.bg_reset = bg_reset
 
     def border_left_span(self, row_index: Union[int, None]) -> str:
-        prefix = self.bg_reset + '║'
-        color = self.bg_reset
+        bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
+        bg_primary = self.bg_primary if self.bg_primary is not None else TableColors.BG_RESET
+        bg_alt = self.bg_alt if self.bg_alt is not None else TableColors.BG_COLOR_ROW
+
+        prefix = bg_reset + '║'
+        color = bg_reset
         if isinstance(row_index, int):
             if row_index % 2 == 0:
-                color = self.bg_primary
+                color = bg_primary
             else:
-                color = self.bg_alt
+                color = bg_alt
         return prefix + color
 
     def border_right_span(self, row_index: Union[int, None]) -> str:
-        return self.bg_reset + '║'
+        bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
+        return bg_reset + '║'
 
     def col_divider_span(self, row_index : Union[int, None]) -> str:
-        color = self.bg_reset
+        bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
+        bg_primary = self.bg_primary if self.bg_primary is not None else TableColors.BG_RESET
+        bg_alt = self.bg_alt if self.bg_alt is not None else TableColors.BG_COLOR_ROW
+
+        color = bg_reset
         if isinstance(row_index, int):
             if row_index % 2 == 0:
-                color = self.bg_primary
+                color = bg_primary
             else:
-                color = self.bg_alt
+                color = bg_alt
         return color + '│'
 
     def header_col_divider_span(self, row_index: Union[int, None]) -> str:
-        color = self.bg_reset
+        bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
+        bg_primary = self.bg_primary if self.bg_primary is not None else TableColors.BG_RESET
+        bg_alt = self.bg_alt if self.bg_alt is not None else TableColors.BG_COLOR_ROW
+
+        color = bg_reset
         if isinstance(row_index, int):
             if row_index % 2 == 0:
-                color = self.bg_primary
+                color = bg_primary
             else:
-                color = self.bg_alt
+                color = bg_alt
         return color + '║'
 
 
@@ -839,7 +852,7 @@ class TableFormatter(object):
         self._set_column_option(column, TableFormatter.COL_OPT_CELL_HALIGN, horiz_align)
         self._set_column_option(column, TableFormatter.COL_OPT_CELL_VALIGN, vert_align)
 
-    def generate_table(self, entries: List[Iterable], force_transpose=False):
+    def generate_table(self, entries: Iterable[Union[Iterable, object]], force_transpose=False):
         """
         Generate the table from a list of entries
 
@@ -1340,7 +1353,7 @@ class FormatBytes:
         elif byte_size > FormatBytes.KB:
             out = decimal_format.format(byte_size / FormatBytes.KB) + " KB"
         else:
-            out = decimal_format.format(byte_size) + " B"
+            out = decimal_format.format(byte_size) + "  B"
 
         return out
 
