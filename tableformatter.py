@@ -928,8 +928,8 @@ class TableFormatter(object):
                     formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_FIELD_FORMATTER)
                     obj_formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_OBJECT_FORMATTER)
                     if obj_formatter is not None and callable(obj_formatter):
-                        field_string = obj_formatter(entry_obj)
-                    elif formatter is not None and callable(formatter):
+                        field_obj = obj_formatter(entry_obj)
+                    if formatter is not None and callable(formatter):
                         field_string = formatter(field_obj)
                     elif isinstance(field_obj, str):
                         field_string = field_obj
@@ -959,8 +959,8 @@ class TableFormatter(object):
                         formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_FIELD_FORMATTER)
                         obj_formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_OBJECT_FORMATTER)
                         if obj_formatter is not None and callable(obj_formatter):
-                            field_string = obj_formatter(entry)
-                        elif formatter is not None and callable(formatter):
+                            field = obj_formatter(entry)
+                        if formatter is not None and callable(formatter):
                             field_string = formatter(field, )
                         elif isinstance(field, str):
                             field_string = field
