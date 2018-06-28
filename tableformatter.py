@@ -600,9 +600,21 @@ def set_default_grid(grid: Grid) -> None:
         DEFAULT_GRID = grid
 
 
-def generate_table(rows: Iterable[Union[Iterable, object]], columns: Collection[Union[str, Tuple[str, dict]]]=None,
-                   grid_style: Optional[Grid]=None, transpose: bool=False) -> str:
-    """Convenience function to easily generate a table from rows/columns"""
+def generate_table(rows: Iterable[Union[Iterable, object]],
+                   columns: Collection[Union[str, Tuple[str, dict]]]=None,
+                   grid_style: Optional[Grid]=None,
+                   transpose: bool=False,
+                   row_tagger: Callable=None) -> str:
+    """
+    Convenience function to easily generate a table from rows/columns
+
+    :param rows: iterable of objects or iterable fields
+    :param columns: Iterable of column definitions
+    :param grid_style: The grid style to use
+    :param transpose: Transpose the rows/columns for display
+    :param row_tagger: decorator function to apply per-row options
+    :return: formatted string containing the table
+    """
     show_headers = True
     use_attrib = False
     if isinstance(columns, Collection) and len(columns) > 0:
@@ -634,7 +646,7 @@ def generate_table(rows: Iterable[Union[Iterable, object]], columns: Collection[
     if grid_style is None:
         grid_style = DEFAULT_GRID
     formatter = TableFormatter(columns, grid_style=grid_style, show_header=show_headers,
-                               use_attribs=use_attrib, transpose=transpose)
+                               use_attribs=use_attrib, transpose=transpose, row_tagger=row_tagger)
     return formatter.generate_table(rows)
 
 
@@ -696,7 +708,7 @@ def Column(col_name: str,
         return col_name, opts
 
 
-def Row(*args, text_color: TableColors=None):
+def Row(*args, text_color: Union[TableColors, str]=None):
     """
     Processes row options and generates a tuple in the format the TableFormatter expects
     :param args: Can be either 1 object or a list of values
@@ -750,7 +762,8 @@ class TableFormatter(object):
                  show_header=True,
                  use_attribs=False,
                  transpose=False,
-                 row_show_header=False):
+                 row_show_header=False,
+                 row_tagger: Callable=None):
         """
         :param columns: list of either column names or tuples of (column name, dict of column options)
         :param cell_padding: number of spaces to pad to the left/right of each column
@@ -776,6 +789,7 @@ class TableFormatter(object):
                              TableFormatter.TABLE_OPT_TRANSPOSE: transpose,
                              TableFormatter.TABLE_OPT_ROW_HEADER: row_show_header}
         self._show_header = show_header
+        self._row_tagger = row_tagger
 
         for col_index, column in enumerate(columns):
             if isinstance(column, tuple) and len(column) > 1 and isinstance(column[1], dict):
@@ -911,11 +925,14 @@ class TableFormatter(object):
                 except TypeError:
                     # not iterable, so we just use the object directly
                     entry_obj = entry
+                    if self._row_tagger is not None:
+                        entry_opts = self._row_tagger(entry_obj)
                 else:
-
-                    if len(entry) == 2:
-                        entry_opts = entry[1]
                     entry_obj = entry[0]
+                    if self._row_tagger is not None:
+                        entry_opts = self._row_tagger(entry_obj)
+                    if len(entry) == 2 and isinstance(entry[1], dict):
+                        entry_opts.update(entry[1])
 
                 for column_index, attrib_name in enumerate(self._column_attribs):
                     field_obj = None
@@ -928,8 +945,8 @@ class TableFormatter(object):
                     formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_FIELD_FORMATTER)
                     obj_formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_OBJECT_FORMATTER)
                     if obj_formatter is not None and callable(obj_formatter):
-                        field_string = obj_formatter(entry_obj)
-                    elif formatter is not None and callable(formatter):
+                        field_obj = obj_formatter(entry_obj)
+                    if formatter is not None and callable(formatter):
                         field_string = formatter(field_obj)
                     elif isinstance(field_obj, str):
                         field_string = field_obj
@@ -949,9 +966,11 @@ class TableFormatter(object):
                     row.append(field_lines)
 
             else:
-                if len(entry) == len(self._columns) + 1:
+                if self._row_tagger is not None:
+                    entry_opts = self._row_tagger(entry)
+                if len(entry) == len(self._columns) + 1 and isinstance(entry[len(self._columns)], dict):
                     # if there is exactly 1 more entry than columns, the last one is metadata
-                    entry_opts = entry[len(self._columns)]
+                    entry_opts.update(entry[len(self._columns)])
 
                 for column_index, field in enumerate(entry):
                     # skip extra values beyond the columns configured
@@ -959,8 +978,8 @@ class TableFormatter(object):
                         formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_FIELD_FORMATTER)
                         obj_formatter = self._get_column_option(column_index, TableFormatter.COL_OPT_OBJECT_FORMATTER)
                         if obj_formatter is not None and callable(obj_formatter):
-                            field_string = obj_formatter(entry)
-                        elif formatter is not None and callable(formatter):
+                            field = obj_formatter(entry)
+                        if formatter is not None and callable(formatter):
                             field_string = formatter(field, )
                         elif isinstance(field, str):
                             field_string = field
@@ -1202,6 +1221,10 @@ class TableFormatter(object):
                     out_string += self._grid_style.border_right_row_divider
                 out_string += '\n'
 
+            opts = dict()
+            if row_index < len(row_opts):
+                opts = row_opts[row_index]
+
             # loop for each line in the row
             num_lines = row_counts[row_index]
             for row_line in range(0, num_lines):
@@ -1228,23 +1251,25 @@ class TableFormatter(object):
                         else:
                             mapped_line = row_line - int((num_lines - len(field)) / 2)
 
-                    opts = dict()
                     if len(field) > mapped_line >= 0:
-                        row_line_text = field[mapped_line]
-                        if row_index < len(row_opts):
-                            opts = row_opts[row_index]
                         # if the field has a line for the current row line, add it
+                        row_line_text = field[mapped_line]
                     else:
                         row_line_text = ''
+
+                    colorize = len(row_line_text.strip()) > 0 and TableFormatter.ROW_OPT_TEXT_COLOR in opts.keys()
+
                     row_line_text = _pad_columns(row_line_text,
                                                  pad_char=self._grid_style.cell_pad_char,
                                                  align=halign_cells[col_index],
                                                  width=col_widths[col_index])
 
-                    if TableFormatter.ROW_OPT_TEXT_COLOR in opts.keys():
+                    if colorize:
                         row_line_text = opts[TableFormatter.ROW_OPT_TEXT_COLOR] + row_line_text
                     out_string += row_line_text
-                    out_string += pad_string + TableColors.RESET
+                    out_string += pad_string
+                    if colorize:
+                        out_string += TableColors.RESET
 
                 if self._grid_style.border_right:
                     out_string += self._grid_style.border_right_span(row_index)
