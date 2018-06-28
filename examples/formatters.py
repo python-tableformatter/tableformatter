@@ -4,6 +4,7 @@
 Demonstration of field and object formatters for both object and tuple based table entries
 """
 import tableformatter as tf
+from typing import Tuple
 
 
 class MyRowObject(object):
@@ -74,6 +75,13 @@ def int2word(num, separator="-"):
         print("num out of range")
 
 
+def decorate_row_obj(row_obj: MyRowObject) -> dict:
+    """Example row decorator function processing row objects"""
+    opts = dict()
+    if row_obj.field4 % 4 == 0:
+        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
+    return opts
+
 rows = [MyRowObject(None, None, 17, 4),
         MyRowObject('123', '123', 5, 56),
         MyRowObject(123, 123, 5, 56),
@@ -91,7 +99,21 @@ columns = (tf.Column('First', width=20, attrib='field1', formatter=tf.FormatByte
            tf.Column('Multiplied', obj_formatter=multiply))
 
 print("Formatters on object-based row entries")
-print(tf.generate_table(rows, columns))
+print(tf.generate_table(rows, columns, row_decorator=decorate_row_obj))
+
+
+def decorate_row_tuples(row_tuple: Tuple) -> dict:
+    """
+    Example decorator function processing row tuples/iterables
+
+    Note that this is the tuple as provided to the TableFormatter prior
+    to display formatting performed on each column
+    """
+    opts = dict()
+    if len(row_tuple) >= 4 and row_tuple[3] % 4 == 0:
+        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
+    return opts
+
 
 rows = [(None, None, 17, 4, None),
         ('123', '123', 5, 56, None),
@@ -108,4 +130,4 @@ columns = (tf.Column('First', width=20, formatter=tf.FormatBytes(), cell_halign=
            tf.Column('Multiplied', obj_formatter=multiply_tuple))
 
 print("Formatters on tuple-based row entries")
-print(tf.generate_table(rows, columns))
+print(tf.generate_table(rows, columns, row_decorator=decorate_row_tuples))
