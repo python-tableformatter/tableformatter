@@ -604,7 +604,7 @@ def generate_table(rows: Iterable[Union[Iterable, object]],
                    columns: Collection[Union[str, Tuple[str, dict]]]=None,
                    grid_style: Optional[Grid]=None,
                    transpose: bool=False,
-                   row_decorator: Callable=None) -> str:
+                   row_tagger: Callable=None) -> str:
     """
     Convenience function to easily generate a table from rows/columns
 
@@ -612,7 +612,7 @@ def generate_table(rows: Iterable[Union[Iterable, object]],
     :param columns: Iterable of column definitions
     :param grid_style: The grid style to use
     :param transpose: Transpose the rows/columns for display
-    :param row_decorator: decorator function to apply per-row options
+    :param row_tagger: decorator function to apply per-row options
     :return: formatted string containing the table
     """
     show_headers = True
@@ -646,7 +646,7 @@ def generate_table(rows: Iterable[Union[Iterable, object]],
     if grid_style is None:
         grid_style = DEFAULT_GRID
     formatter = TableFormatter(columns, grid_style=grid_style, show_header=show_headers,
-                               use_attribs=use_attrib, transpose=transpose, row_decorator=row_decorator)
+                               use_attribs=use_attrib, transpose=transpose, row_tagger=row_tagger)
     return formatter.generate_table(rows)
 
 
@@ -763,7 +763,7 @@ class TableFormatter(object):
                  use_attribs=False,
                  transpose=False,
                  row_show_header=False,
-                 row_decorator: Callable=None):
+                 row_tagger: Callable=None):
         """
         :param columns: list of either column names or tuples of (column name, dict of column options)
         :param cell_padding: number of spaces to pad to the left/right of each column
@@ -789,7 +789,7 @@ class TableFormatter(object):
                              TableFormatter.TABLE_OPT_TRANSPOSE: transpose,
                              TableFormatter.TABLE_OPT_ROW_HEADER: row_show_header}
         self._show_header = show_header
-        self._row_decorator = row_decorator
+        self._row_tagger = row_tagger
 
         for col_index, column in enumerate(columns):
             if isinstance(column, tuple) and len(column) > 1 and isinstance(column[1], dict):
@@ -925,12 +925,12 @@ class TableFormatter(object):
                 except TypeError:
                     # not iterable, so we just use the object directly
                     entry_obj = entry
-                    if self._row_decorator is not None:
-                        entry_opts = self._row_decorator(entry_obj)
+                    if self._row_tagger is not None:
+                        entry_opts = self._row_tagger(entry_obj)
                 else:
                     entry_obj = entry[0]
-                    if self._row_decorator is not None:
-                        entry_opts = self._row_decorator(entry_obj)
+                    if self._row_tagger is not None:
+                        entry_opts = self._row_tagger(entry_obj)
                     if len(entry) == 2 and isinstance(entry[1], dict):
                         entry_opts.update(entry[1])
 
@@ -966,8 +966,8 @@ class TableFormatter(object):
                     row.append(field_lines)
 
             else:
-                if self._row_decorator is not None:
-                    entry_opts = self._row_decorator(entry)
+                if self._row_tagger is not None:
+                    entry_opts = self._row_tagger(entry)
                 if len(entry) == len(self._columns) + 1 and isinstance(entry[len(self._columns)], dict):
                     # if there is exactly 1 more entry than columns, the last one is metadata
                     entry_opts.update(entry[len(self._columns)])
