@@ -1,4 +1,4 @@
-## 0.1.2 (June 29, 2013)
+## 0.1.2 (June 29, 2018)
 
 * Enabled ability to chain obj_formatter with formatter
 * Improved API for specifying per-row text color in the table 
