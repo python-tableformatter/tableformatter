@@ -14,6 +14,8 @@ Many other modules for formatting tabular data require the developer to create a
 objects/data into a structure the formatter can consume.  One relatively novel aspect of tableformatter is the ability to directly
 receive arbitrary Python objects.
 
+[![Screenshot](tf.png)](https://github.com/python-tableformatter/tableformatter/blob/master/tf.png)
+
 Main Features
 -------------
 - Easy to display simple tables with just one function call when you don't need the fine-grained control
@@ -34,7 +36,7 @@ pip install tableformatter
 
 Dependencies
 ------------
-``tableformatter`` depends on the [wcwidth](https://github.com/jquast/wcwidth) module for measuring the width of 
+``tableformatter`` depends on the [wcwidth](https://github.com/jquast/wcwidth) module for measuring the width of
 unicode strings rendered to a terminal.
 
 If you wish to use the optional support for color, then at least one of the following two modules must be installed:
@@ -47,7 +49,7 @@ If both ``colorama`` and ``colored`` are installed, then ``colored`` will take p
 Usage
 =====
 For simple cases, you only need to use a single function from this module: ``generate_table``.  The only required argument
-to this function is ``rows`` which is an Iterable of Iterables such as a list of lists or another tabular data type like 
+to this function is ``rows`` which is an Iterable of Iterables such as a list of lists or another tabular data type like
 a 2D [numpy](http://www.numpy.org) array.  ``generate_table`` outputs a nicely formatted table:
 
 ```Python
@@ -132,7 +134,7 @@ print(generate_table(rows, cols, transpose=True))
 ║ Col3 ║ A3 │ B3 │ C3 │ D3 ║
 ║ Col4 ║ A4 │ B4 │ C4 │ D4 ║
 ╚══════╩════╧════╧════╧════╝
-``` 
+```
 
 Column Alignment
 ----------------
