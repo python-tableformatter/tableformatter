@@ -1,0 +1,18 @@
+## 0.1.2 (June 29, 2013)
+
+* Enabled ability to chain obj_formatter with formatter
+* Improved API for specifying per-row text color in the table 
+
+## 0.1.1 (June 25, 2018)
+
+* Correcting incorrectly packaged 0.1.0
+
+## 0.1.0 (June 25, 2018)
+
+* Unit tests added with automated testing integrated
+* Multiple examples added 
+* Fixed some bugs related to table transpose
+
+## 0.0.1 (June 23, 2018)
+
+* Initial release of TableFormatter
