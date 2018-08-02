@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 """A simple example demonstrating the following:
     1) How to integrate tableformatter into an interactive command-line application using the cmd2 module
@@ -31,11 +31,13 @@ import tableformatter as tf
 # Configure colors for when users chooses the "-c" flag to enable color in the table output
 try:
     from colored import bg
+
     BACK_PRI = bg(4)
     BACK_ALT = bg(22)
 except ImportError:
     try:
         from colorama import Back
+
         BACK_PRI = Back.LIGHTBLUE_EX
         BACK_ALT = Back.LIGHTYELLOW_EX
     except ImportError:
@@ -64,12 +66,11 @@ EXAMPLE_ITERABLE_DATA = [['Shanghai (上海)', 'Shanghai', 'China', 'Asia', 2418
                          ['Guangzho (广州市)', 'Guangdong', 'China', 'Asia', 13081000, 1347.81],
                          ['Mumbai (मुंबई)', 'Maharashtra', 'India', 'Asia', 12442373, 465.78],
                          ['Istanbul (İstanbuld)', 'Istanbul', 'Turkey', 'Eurasia', 12661000, 620.29],
-                        ]
+                         ]
 
 # Calculate population density
 for row in EXAMPLE_ITERABLE_DATA:
-    row.append(row[-2]/row[-1])
-
+    row.append(row[-2] / row[-1])
 
 # Column headers plus optional formatting info for each column
 COLUMNS = [tf.Column('City', width=11, header_halign=tf.ColumnAlignment.AlignCenter),
@@ -81,13 +82,14 @@ COLUMNS = [tf.Column('City', width=11, header_halign=tf.ColumnAlignment.AlignCen
                      cell_halign=tf.ColumnAlignment.AlignRight, formatter=two_dec),
            tf.Column('Pop. Density (/km²)', width=12, header_halign=tf.ColumnAlignment.AlignCenter,
                      cell_halign=tf.ColumnAlignment.AlignRight, formatter=no_dec),
-          ]
+           ]
 
 
 # ######## Table data formatted as an iterable of python objects #########
 
 class CityInfo(object):
     """City information container"""
+
     def __init__(self, city: str, province: str, country: str, continent: str, population: int, area: float):
         self.city = city
         self.province = province
@@ -131,8 +133,7 @@ OBJ_COLS = [tf.Column('City', attrib='city', header_halign=tf.ColumnAlignment.Al
                       cell_halign=tf.ColumnAlignment.AlignRight, formatter=two_dec),
             tf.Column('Pop. Density (/km²)', width=12, header_halign=tf.ColumnAlignment.AlignCenter,
                       cell_halign=tf.ColumnAlignment.AlignRight, obj_formatter=pop_density),
-           ]
-
+            ]
 
 EXTREMELY_HIGH_POULATION_DENSITY = 25000
 
@@ -177,7 +178,12 @@ class TableDisplay(cmd2.Cmd):
         else:
             grid = None
 
-        formatted_table = tf.generate_table(rows=rows, columns=columns, grid_style=grid, row_tagger=row_stylist)
+        transpose = False
+        if grid_args.transpose:
+            transpose = True
+
+        formatted_table = tf.generate_table(rows=rows, columns=columns, grid_style=grid, row_tagger=row_stylist,
+                                            transpose=transpose)
         self.ppaged(formatted_table, chop=True)
 
     table_parser = argparse.ArgumentParser()
@@ -185,6 +191,7 @@ class TableDisplay(cmd2.Cmd):
     table_item_group.add_argument('-c', '--color', action='store_true', help='Enable color')
     table_item_group.add_argument('-f', '--fancy', action='store_true', help='Fancy Grid')
     table_item_group.add_argument('-s', '--sparse', action='store_true', help='Sparse Grid')
+    table_parser.add_argument('-t', '--transpose', action='store_true', help='Transpose rows and columns')
 
     @cmd2.with_argparser(table_parser)
     def do_table(self, args):

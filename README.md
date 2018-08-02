@@ -1,5 +1,4 @@
-tableformatter: tabular data formatter
-======================================
+# tableformatter: tabular data formatter
 [![Latest Version](https://img.shields.io/pypi/v/tableformatter.svg?style=flat-square&label=latest%20stable%20version)](https://pypi.org/project/tableformatter/)
 [![Build status](https://api.travis-ci.com/python-tableformatter/tableformatter.svg?branch=master)](https://travis-ci.com/python-tableformatter/tableformatter)
 [![Appveyor build status](https://img.shields.io/appveyor/ci/anselor/tableformatter.svg?style=flat-square&label=windows%20build)](https://ci.appveyor.com/project/anselor/tableformatter)
@@ -16,8 +15,8 @@ receive arbitrary Python objects.
 
 [![Screenshot](tf.png)](https://github.com/python-tableformatter/tableformatter/blob/master/tf.png)
 
-Main Features
--------------
+
+## Main Features
 - Easy to display simple tables with just one function call when you don't need the fine-grained control
 - Fine-grained control of almost every aspect of how data is formatted when you want it
 - Tables with column headers
@@ -28,14 +27,13 @@ Main Features
 - Support for Python 3.4+ on Windows, macOS, and Linux
 
 
-Installation
-============
+## Installation
 ```Bash
 pip install tableformatter
 ```
 
-Dependencies
-------------
+
+## Dependencies
 ``tableformatter`` depends on the [wcwidth](https://github.com/jquast/wcwidth) module for measuring the width of
 unicode strings rendered to a terminal.
 
@@ -46,20 +44,19 @@ If you wish to use the optional support for color, then at least one of the foll
 If both ``colorama`` and ``colored`` are installed, then ``colored`` will take precedence.
 
 
-Usage
-=====
+## Usage
 For simple cases, you only need to use a single function from this module: ``generate_table``.  The only required argument
 to this function is ``rows`` which is an Iterable of Iterables such as a list of lists or another tabular data type like
 a 2D [numpy](http://www.numpy.org) array.  ``generate_table`` outputs a nicely formatted table:
 
 ```Python
-from tableformatter import generate_table
+import tableformatter as tf
 
 rows = [('A1', 'A2', 'A3', 'A4'),
         ('B1', 'B2\nB2\nB2', 'B3', 'B4'),
         ('C1', 'C2', 'C3', 'C4'),
         ('D1', 'D2', 'D3', 'D4')]
-print(generate_table(rows))
+print(tf.generate_table(rows))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ║ B1 │ B2 │ B3 │ B4 ║
@@ -72,13 +69,13 @@ print(generate_table(rows))
 
 *NOTE: Rendering of tables looks much better in Python than it appears in this Markdown file.*
 
-Column Headers
---------------
+
+## Column Headers
 The second argument to ``generate_table`` named ``columns`` is optional and defines a list of column headers to be used.
 
 ```Python
 cols = ['Col1', 'Col2', 'Col3', 'Col4']
-print(generate_table(rows, cols))
+print(tf.generate_table(rows, cols))
 ╔══════╤══════╤══════╤══════╗
 ║ Col1 │ Col2 │ Col3 │ Col4 ║
 ╠══════╪══════╪══════╪══════╣
@@ -91,8 +88,8 @@ print(generate_table(rows, cols))
 ╚══════╧══════╧══════╧══════╝
 ```
 
-Grid Style
-----------
+
+## Grid Style
 The third argument to ``generated`` table named ``grid_style`` is optional and specifies how the table lines are drawn.
 
 Supported grid sytles are:
@@ -102,9 +99,7 @@ Supported grid sytles are:
 * **SparseGrid** - sparse grid with no lines at all to conserve both vertical and horizontal space
 
 ```Python
-from tableformatter import FancyGrid
-
-print(generate_table(rows, grid_style=FancyGrid()))
+print(tf.generate_table(rows, grid_style=tf.FancyGrid()))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ╟────┼────┼────┼────╢
@@ -118,14 +113,14 @@ print(generate_table(rows, grid_style=FancyGrid()))
 ╚════╧════╧════╧════╝
 ```
 
-Transposed Tables
------------------
+
+## Transposed Tables
 Normally the "rows" are displayed left-to-right and "columns" are displayed up-to-down.  However, if you want to transpose
 this and print "rows" up-to-down and "columns" left-to-right then that is easily done using the fourth (optional) argument
 to ``generate_table``:
 
 ```Python
-print(generate_table(rows, cols, transpose=True))
+print(tf.generate_table(rows, cols, transpose=True))
 ╔══════╦════╤════╤════╤════╗
 ║ Col1 ║ A1 │ B1 │ C1 │ D1 ║
 ║ Col2 ║ A2 │ B2 │ C2 │ D2 ║
@@ -136,14 +131,118 @@ print(generate_table(rows, cols, transpose=True))
 ╚══════╩════╧════╧════╧════╝
 ```
 
-Column Alignment
-----------------
-TODO
 
-Number Formatting
------------------
-TODO
+## Column Formatting
+For rich column formatting, instead of passing a simple iterable to the 2nd argument of ``generate_table``, an iterable
+of ``tableformatter.Column`` objects can be passed.  The ``Column`` class has the following attributes, all of which are
+optional other than the first:
 
-Color
------
-TODO
+| Attribute name | Description |
+| -------------- | ----------- |
+| col_name       | Column name to display
+| width          | Number of displayed terminal characters. Unicode wide characters count as 2 displayed characters.
+| attrib         | The name of the object attribute to look up for cell contents on this column
+| wrap_mode      | Defines how to handle long cells that must be wrapped or truncated
+| wrap_prefix    | String to display at the beginning of each wrapped line in a cell
+| cell_padding   | Number of padding spaces to the left and right of each cell
+| header_halign  | Horizontal alignment of the column header
+| header_valign  | Vertical alignment of the column header
+| cell_halign    | Horizontal alignment of the cells in this column
+| cell_valign    | Vertical alignment of the cells in this column
+| formatter      | Callable that can process the value in this column for display
+| obj_formatter  | Callable that processes the row object to generate content for this column
+
+See the [columns.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/columns.py) example
+for a demonstration for how all of these options can be used.
+
+### Column Alignment
+You can override both the horizontal and vertical alignment.  This can be done separately for the column header versus
+the cell contents.
+
+Possible alignments are all elements within the ``ColumnAlignment`` enum class: 
+* Horizontal alignments:
+    * AlignLeft (*default*)
+    * AlignCenter
+    * AlignRight
+* Vertical alignments:
+    * AlignTop (*default*)
+    * AlignBottom
+    
+```Python
+columns = (tf.Column('Col1', cell_halign=tf.ColumnAlignment.AlignLeft),
+           tf.Column('Col2', cell_halign=tf.ColumnAlignment.AlignRight),
+           tf.Column('Col3', cell_halign=tf.ColumnAlignment.AlignCenter),
+           tf.Column('Col4', cell_valign=tf.ColumnAlignment.AlignBottom))
+print(tf.generate_table(rows, columns))
+╔══════╤══════╤══════╤══════╗
+║ Col1 │ Col2 │ Col3 │ col4 ║
+╠══════╪══════╪══════╪══════╣
+║ A1   │   A2 │  A3  │ A4   ║
+║ B1   │   B2 │  B3  │      ║
+║      │   B2 │      │      ║
+║      │   B2 │      │ B4   ║
+║ C1   │   C2 │  C3  │ C4   ║
+║ D1   │   D2 │  D3  │ D4   ║
+╚══════╧══════╧══════╧══════╝
+```    
+   
+### Number Formatting
+The ``formatter`` attribute of the ``Column`` class accepts an arbitrary callable which accepts a single argument containing
+the cell contents for that column and returns a string with the contents formatted in the
+desired format.  There are a couple callable classes built into ``tableformatter`` to help
+formatting numbers:
+* FormatBytes - formats a value in bytes into a human readable string
+* FormatCommas - Formats a number with comma separators
+
+```Python
+rows = [(None, None),
+        ('123', '123'),
+        (123, 123),
+        (12345, 12345),
+        (12345678, 12345678),
+        (1234567890, 1234567890),
+        (1234567890123, 1234567890123)]
+cols = (tf.Column('First', width=20, formatter=tf.FormatBytes(), cell_halign=tf.ColumnAlignment.AlignRight),
+        tf.Column('Second', formatter=tf.FormatCommas(), cell_halign=tf.ColumnAlignment.AlignRight))
+print(tf.generate_table(rows, cols))
+╔═══════════╤═══════════════════╗
+║ First     │ Second            ║
+╠═══════════╪═══════════════════╣
+║           │                   ║
+║ 123.00  B │               123 ║
+║ 123.00  B │               123 ║
+║  12.06 KB │            12,345 ║
+║  11.77 MB │        12,345,678 ║
+║   1.15 GB │     1,234,567,890 ║
+║   1.12 TB │ 1,234,567,890,123 ║
+╚═══════════╧═══════════════════╝
+```
+
+See the [cmd2_tables.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/formatters.py) example
+for examples of how custom formatter functions can be used.
+
+
+## Color
+If either ``colorama`` or ``colored`` is installed, then ``tableformatter`` has support for altering both the foreground
+and background color of cell contents.
+
+### Alternating background row color
+It is trivial to alternate the background color of each row as follows:
+```Python
+from colorama import Back
+print(generate_table(rows, cols, grid_style=tf.AlternatingRowGrid(Back.GREEN, Back.BLUE)))
+```
+See the [cmd2_tables.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/cmd2_tables.py) or 
+[color.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/color.py) examples for more 
+complete examples.
+
+### Dynamically setting cell color based on cell contents
+The 5th argument to ``generate_table`` is **row_tagger** and it expects a callable which accepts a single argument for
+the row contents and returns a dictionary of row options for that row which can
+be used to set the foreground and/or background color of all cells in that row.
+
+See the ``high_density_tuples`` function in the [cmd2_tables.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/cmd2_tables.py)
+example for a demonstration of how to use this feature.
+
+
+
