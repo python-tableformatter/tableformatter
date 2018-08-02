@@ -668,14 +668,14 @@ def Column(col_name: str,
     :param col_name: Column name to display
     :param width: Number of displayed terminal characters. Unicode wide characters count as 2 displayed characters.
     :param attrib: The name of the object attribute to look up for cell contents on this column
-    :param wrap_mode: Defines how to handle long cells that must be wropped or truncated
+    :param wrap_mode: Defines how to handle long cells that must be wrapped or truncated
     :param wrap_prefix: String to display at the beginning of each wrapped line in a cell
     :param cell_padding: Number of padding spaces to the left and right of each cell
     :param header_halign: Horizontal alignment of the column header
     :param header_valign: Vertical alignment of the column header
     :param cell_halign: Horizontal alignment of the cells in this column
     :param cell_valign: Vertical alignment of the cells in this column
-    :param formatter: Callable that can process the value in this column for display.
+    :param formatter: Callable that can process the value in this column for display
     :param obj_formatter: Callable that processes the row object to generate content for this column
     :return: A column tuple the TableFormatter expects
     """
