@@ -615,6 +615,27 @@ def generate_table(rows: Iterable[Union[Iterable, object]],
     :param row_tagger: decorator function to apply per-row options
     :return: formatted string containing the table
     """
+    # Extract column headers if this is a NumPy record array and columns weren't specified
+    if not columns:
+        try:
+            import numpy as np
+        except ImportError:
+            pass
+        else:
+            if isinstance(rows, np.recarray):
+                columns = rows.dtype.names
+
+    # Deal with Pandas DataFrames not being iterable in a sane way
+    try:
+        import pandas as pd
+    except ImportError:
+        pass
+    else:
+        if isinstance(rows, pd.DataFrame):
+            if not columns:
+                columns = rows.columns
+            rows = rows.values
+
     show_headers = True
     use_attrib = False
     if isinstance(columns, Collection) and len(columns) > 0:
