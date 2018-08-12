@@ -69,6 +69,23 @@ print(tf.generate_table(rows))
 
 *NOTE: Rendering of tables looks much better in Python than it appears in this Markdown file.*
 
+See the [simple_text.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/simple_text.py) and
+[simple_object.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/simple_object.py) examples
+for more basic usage.
+
+## Supported Data Types
+The following tabular data types are supported:
+* list of lists or another iterable of iterables
+* two-dimensional NumPy arrays
+* NumPy record arrays (names as columns)
+* pandas.DataFrame
+* list or another iterable of arbitrary non-iterable objects (column specifier required) 
+* list or another iterable of dicts (dict keys iterated through as rows where each key must be a hashable iterable)
+* dict of iterables (keys as columns)
+
+See the [data_types.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/data_types.py) 
+example for more info.
+
 
 ## Column Headers
 The second argument to ``generate_table`` named ``columns`` is optional and defines a list of column headers to be used.
@@ -87,7 +104,6 @@ print(tf.generate_table(rows, cols))
 ║ D1   │ D2   │ D3   │ D4   ║
 ╚══════╧══════╧══════╧══════╝
 ```
-
 
 ## Grid Style
 The third argument to ``generated`` table named ``grid_style`` is optional and specifies how the table lines are drawn.
