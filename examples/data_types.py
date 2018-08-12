@@ -47,8 +47,7 @@ print("Data type: iterable of dicts (dict keys iterated through as column values
 print(iterable_of_dicts)
 print(tf.generate_table(iterable_of_dicts))
 
-dict_of_iterables = {(1, 2, 3, 4): 'a',
-                     (5, 6, 7, 8): 'b'}
+dict_of_iterables = d
 print("Data type: dict of iterables (dict keys iterated through as rows where each key must be a hashable iterable)")
 print(dict_of_iterables)
 print(tf.generate_table(dict_of_iterables))

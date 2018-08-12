@@ -4,6 +4,7 @@ Formats data into a table
 """
 import abc
 import enum
+import itertools
 import re
 import textwrap as textw
 from typing import List, Iterable, Optional, Tuple, Union, Callable
@@ -615,6 +616,12 @@ def generate_table(rows: Iterable[Union[Iterable, object]],
     :param row_tagger: decorator function to apply per-row options
     :return: formatted string containing the table
     """
+    # If a dictionary is passed in, then treat keys as column headers and values as column values
+    if isinstance(rows, dict):
+        if not columns:
+            columns = rows.keys()
+        rows = list(itertools.zip_longest(*rows.values()))  # columns have to be transposed
+
     # Extract column headers if this is a NumPy record array and columns weren't specified
     if not columns:
         try:
