@@ -3,8 +3,6 @@
 Unit testing the variety of data types supported by tableformatter.
 """
 from collections import OrderedDict
-import numpy as np
-import pandas as pd
 import tableformatter as tf
 
 
@@ -26,19 +24,12 @@ EXPECTED_WITH_HEADERS = '''
 
 iteralbe_of_iterables = [[1, 2, 3, 4],
                          [5, 6, 7, 8]]
-np_2d_array = np.array(iteralbe_of_iterables)
 d = {'col1': [1, 5], 'col2': [2, 6], 'col3': [3, 7], 'col4': [4, 8]}
 od = OrderedDict(sorted(d.items(), key=lambda t: t[0]))
-df = pd.DataFrame(data=od)
 
 
 def test_iterable_of_iterables():
     table = tf.generate_table(iteralbe_of_iterables)
-    assert table == EXPECTED_BASIC
-
-
-def test_numpy_2d_array():
-    table = tf.generate_table(np_2d_array)
     assert table == EXPECTED_BASIC
 
 
@@ -49,27 +40,6 @@ def test_iterable_of_dicts():
                          OrderedDict(sorted(d2.items(), key=lambda t: t[0]))]
     table = tf.generate_table(iterable_of_dicts)
     assert table == EXPECTED_BASIC
-
-
-def test_numpy_record_array():
-    np_rec_array = np.rec.array([(1, 2., 'Hello'),
-                                 (2, 3., "World")],
-                                dtype=[('foo', 'i4'), ('bar', 'f4'), ('baz', 'U10')])
-    table = tf.generate_table(np_rec_array)
-    expected = '''
-╔═════╤═════╤═══════╗
-║ foo │ bar │ baz   ║
-╠═════╪═════╪═══════╣
-║ 1   │ 2.0 │ Hello ║
-║ 2   │ 3.0 │ World ║
-╚═════╧═════╧═══════╝
-'''.lstrip('\n')
-    assert table == expected
-
-
-def test_pandas_dataframe():
-    table = tf.generate_table(df)
-    assert table == EXPECTED_WITH_HEADERS
 
 
 def test_dict_of_iterables():
@@ -99,3 +69,41 @@ def test_iterable_of_non_iterable_objects():
                tf.Column('col4', attrib='field4'))
     table = tf.generate_table(rows, columns)
     assert table == EXPECTED_WITH_HEADERS
+
+
+try:
+    import numpy as np
+except ImportError:
+    pass
+else:
+    np_2d_array = np.array(iteralbe_of_iterables)
+
+    def test_numpy_2d_array():
+        table = tf.generate_table(np_2d_array)
+        assert table == EXPECTED_BASIC
+
+    def test_numpy_record_array():
+        np_rec_array = np.rec.array([(1, 2., 'Hello'),
+                                     (2, 3., "World")],
+                                    dtype=[('foo', 'i4'), ('bar', 'f4'), ('baz', 'U10')])
+        table = tf.generate_table(np_rec_array)
+        expected = '''
+╔═════╤═════╤═══════╗
+║ foo │ bar │ baz   ║
+╠═════╪═════╪═══════╣
+║ 1   │ 2.0 │ Hello ║
+║ 2   │ 3.0 │ World ║
+╚═════╧═════╧═══════╝
+'''.lstrip('\n')
+        assert table == expected
+
+try:
+    import pandas as pd
+except ImportError:
+    pass
+else:
+    df = pd.DataFrame(data=od)
+
+    def test_pandas_dataframe():
+        table = tf.generate_table(df)
+        assert table == EXPECTED_WITH_HEADERS
