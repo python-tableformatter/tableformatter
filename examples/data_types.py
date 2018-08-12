@@ -12,6 +12,7 @@ tableformatter supports and has been tested with the following tabular data type
 
 This example demonstrates tableformatter working with these data types in the simplest possible manner.
 """
+from collections import OrderedDict
 import numpy as np
 import pandas as pd
 import tableformatter as tf
@@ -36,18 +37,21 @@ print(np_rec_array)
 print(tf.generate_table(np_rec_array))
 
 d = {'col1': [1, 5], 'col2': [2, 6], 'col3': [3, 7], 'col4': [4, 8]}
-pandas_dataframe = pd.DataFrame(data=d)
+od = OrderedDict(sorted(d.items(), key=lambda t: t[0]))
+pandas_dataframe = pd.DataFrame(data=od)
 print("Data type: Pandas DataFrame")
 print(pandas_dataframe)
 print(tf.generate_table(pandas_dataframe))
 
-iterable_of_dicts = [ {1: 'a', 2: 'b', 3: 'c', 4: 'd'},
-                      {5: 'e', 6: 'f', 7: 'g', 8: 'h'}]
+d1 = {1: 'a', 2: 'b', 3: 'c', 4: 'd'}
+d2 = {5: 'e', 6: 'f', 7: 'g', 8: 'h'}
+iterable_of_dicts = [ OrderedDict(sorted(d1.items(), key=lambda t: t[0])),
+                      OrderedDict(sorted(d2.items(), key=lambda t: t[0]))]
 print("Data type: iterable of dicts (dict keys iterated through as column values)")
 print(iterable_of_dicts)
 print(tf.generate_table(iterable_of_dicts))
 
-dict_of_iterables = d
+dict_of_iterables = od
 print("Data type: dict of iterables (dict keys iterated through as rows where each key must be a hashable iterable)")
 print(dict_of_iterables)
 print(tf.generate_table(dict_of_iterables))

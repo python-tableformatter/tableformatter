@@ -2,6 +2,7 @@
 """
 Unit testing the variety of data types supported by tableformatter.
 """
+from collections import OrderedDict
 import numpy as np
 import pandas as pd
 import tableformatter as tf
@@ -27,7 +28,8 @@ iteralbe_of_iterables = [[1, 2, 3, 4],
                          [5, 6, 7, 8]]
 np_2d_array = np.array(iteralbe_of_iterables)
 d = {'col1': [1, 5], 'col2': [2, 6], 'col3': [3, 7], 'col4': [4, 8]}
-df = pd.DataFrame(data=d)
+od = OrderedDict(sorted(d.items(), key=lambda t: t[0]))
+df = pd.DataFrame(data=od)
 
 
 def test_iterable_of_iterables():
@@ -36,14 +38,15 @@ def test_iterable_of_iterables():
 
 
 def test_numpy_2d_array():
-    np_2d_array = np.array(iteralbe_of_iterables)
     table = tf.generate_table(np_2d_array)
     assert table == EXPECTED_BASIC
 
 
 def test_iterable_of_dicts():
-    iterable_of_dicts = [{1: 'a', 2: 'b', 3: 'c', 4: 'd'},
-                         {5: 'e', 6: 'f', 7: 'g', 8: 'h'}]
+    d1 = {1: 'a', 2: 'b', 3: 'c', 4: 'd'}
+    d2 = {5: 'e', 6: 'f', 7: 'g', 8: 'h'}
+    iterable_of_dicts = [OrderedDict(sorted(d1.items(), key=lambda t: t[0])),
+                         OrderedDict(sorted(d2.items(), key=lambda t: t[0]))]
     table = tf.generate_table(iterable_of_dicts)
     assert table == EXPECTED_BASIC
 
@@ -51,7 +54,7 @@ def test_iterable_of_dicts():
 def test_numpy_record_array():
     np_rec_array = np.rec.array([(1, 2., 'Hello'),
                                  (2, 3., "World")],
-                                    dtype=[('foo', 'i4'), ('bar', 'f4'), ('baz', 'U10')])
+                                dtype=[('foo', 'i4'), ('bar', 'f4'), ('baz', 'U10')])
     table = tf.generate_table(np_rec_array)
     expected = '''
 ╔═════╤═════╤═══════╗
@@ -70,7 +73,7 @@ def test_pandas_dataframe():
 
 
 def test_dict_of_iterables():
-    table = tf.generate_table(d)
+    table = tf.generate_table(od)
     assert table == EXPECTED_WITH_HEADERS
 
 
