@@ -2,13 +2,13 @@
 # coding=utf-8
 """
 tableformatter supports and has been tested with the following tabular data types:
-- lists of lists or other iterables of iterables
-- two-dimensional NumPy array
-- list or another iterable of dicts (dict keys iterated through as column values)
-- dict of iterables (dict keys iterated through as rows where each key must be a hashable iterable)
-- NumPy record arrays (names as columns)
-- pandas.DataFrame
-- list or another iterable of arbitrary non-iterable objects (column specifier required)
+* list of lists or another iterable of iterables
+* two-dimensional NumPy arrays
+* NumPy record arrays (names as columns)
+* pandas.DataFrame
+* list or another iterable of arbitrary non-iterable objects (column specifier required)
+* list or another iterable of dicts (dict keys iterated through as rows where each key must be a hashable iterable)
+* dict of iterables (keys as columns)
 
 This example demonstrates tableformatter working with these data types in the simplest possible manner.
 """
