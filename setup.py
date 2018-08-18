@@ -5,7 +5,7 @@ Setuptools setup file, used to install or test 'tableformatter'
 """
 from setuptools import setup
 
-VERSION = '0.1.3'
+VERSION = '0.1.4'
 DESCRIPTION = "python-tableformatter - Tabular data formatter allowing printing from both arbitrary tuples of strings or object inspection"
 LONG_DESCRIPTION = """tableformatter is a tabular data formatter allowing printing from both arbitrary tuples of strings or object inspection.
 It converts your data into a string form suitable for pretty-printing as a table.  The goal is to make it quick and easy

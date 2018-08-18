@@ -1,3 +1,6 @@
+## 01.4 (TBD, 2018)
+* TBD 
+
 ## 0.1.3 (August 18, 2018)
 * Improved support for Pandas DataFrame, Numpy RecordArray, and dict tabular data types 
 
