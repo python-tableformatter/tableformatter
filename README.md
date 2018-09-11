@@ -2,6 +2,7 @@
 [![Latest Version](https://img.shields.io/pypi/v/tableformatter.svg?style=flat-square&label=latest%20stable%20version)](https://pypi.org/project/tableformatter/)
 [![Build status](https://api.travis-ci.com/python-tableformatter/tableformatter.svg?branch=master)](https://travis-ci.com/python-tableformatter/tableformatter)
 [![Appveyor build status](https://img.shields.io/appveyor/ci/anselor/tableformatter.svg?style=flat-square&label=windows%20build)](https://ci.appveyor.com/project/anselor/tableformatter)
+[![Azure Pipelines status](https://dev.azure.com/python-tableformatter/tableformatter/_apis/build/status/python-tableformatter.tableformatter?branch=master)](https://dev.azure.com/python-tableformatter/tableformatter/_build/latest?definitionId=1&branch=master)
 [![codecov](https://codecov.io/gh/python-tableformatter/tableformatter/branch/master/graph/badge.svg)](https://codecov.io/gh/python-tableformatter/tableformatter)
 
 tableformatter is a tabular data formatter allowing printing from both arbitrary tuples of strings or object inspection.
