@@ -32,9 +32,12 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
 
-    # Install dependencies - install specific PyPI packages with pip
-  - script: python -m pip install --upgrade pip && pip install wcwidth
+    # Install dependencies - install specific PyPI packages with pip, including tableformatter and its dependencies
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -e .
     displayName: 'Install dependencies'
+    continueOnError: false
 
     # TODO: Consider adding a lint test to use flake8, pylint, or black to validate code style
 
