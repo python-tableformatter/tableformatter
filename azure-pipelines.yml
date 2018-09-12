@@ -34,7 +34,7 @@ jobs:
 
     # Install dependencies - install specific PyPI packages with pip, including tableformatter and its dependencies
   - script: |
-      python -m pip install --upgrade pip
+      python -m pip install --upgrade pip && pip install --upgrade gnureadline
       pip install -e .
     displayName: 'Install dependencies'
     continueOnError: false
@@ -44,9 +44,9 @@ jobs:
     # Test - test with pytest, collect coverage metrics with pytest-cov, and publish these metrics to codecov.io
   - script: |
       pip install pytest pytest-cov codecov
-      py.test --cov=tableformatter --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html
-      codecov
+      py.test --cov=tableformatter --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html && codecov
     displayName: 'Test with pytest'
+    continueOnError: false
 
     # Publish test results to the Azure DevOps server
   - task: PublishTestResults@2
