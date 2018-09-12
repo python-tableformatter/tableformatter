@@ -14,8 +14,6 @@ jobs:
   # Run the pipeline with multiple Python versions
   strategy:
     matrix:
-      Python34:
-        python.version: '3.4'
       Python35:
         python.version: '3.5'
       Python36:
@@ -23,7 +21,7 @@ jobs:
       Python37:
         python.version: '3.7'
     # Increase the maxParallel value to simultaneously run the job for all versions in the matrix (max 10 for free open-source)
-    maxParallel: 4
+    maxParallel: 3
 
   steps:
     # Set the UsePythonVersion task to reference the matrix variable for its Python version
