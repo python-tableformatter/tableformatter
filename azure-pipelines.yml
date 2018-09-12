@@ -43,7 +43,7 @@ jobs:
 
     # Test - test with pytest, collect coverage metrics with pytest-cov, and publish these metrics to codecov.io
   - script: |
-      pip install pytest pytest-cov codecov
+      pip install pytest pytest-cov codecov numpy pandas
       py.test --cov=tableformatter --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html && codecov
     displayName: 'Test with pytest'
     continueOnError: false
