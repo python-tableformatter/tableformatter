@@ -14,8 +14,6 @@ jobs:
   # Run the pipeline with multiple Python versions
   strategy:
     matrix:
-      Python34:
-        python.version: '3.4'
       Python35:
         python.version: '3.5'
       Python36:
@@ -23,7 +21,7 @@ jobs:
       Python37:
         python.version: '3.7'
     # Increase the maxParallel value to simultaneously run the job for all versions in the matrix (max 10 for free open-source)
-    maxParallel: 4
+    maxParallel: 3
 
   steps:
     # Set the UsePythonVersion task to reference the matrix variable for its Python version
@@ -34,7 +32,7 @@ jobs:
 
     # Install dependencies - install specific PyPI packages with pip, including tableformatter and its dependencies
   - script: |
-      python -m pip install --upgrade pip
+      python -m pip install --upgrade pip && pip install --upgrade gnureadline
       pip install -e .
     displayName: 'Install dependencies'
     continueOnError: false
@@ -43,10 +41,10 @@ jobs:
 
     # Test - test with pytest, collect coverage metrics with pytest-cov, and publish these metrics to codecov.io
   - script: |
-      pip install pytest pytest-cov codecov
-      py.test --cov=tableformatter --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html
-      codecov
+      pip install pytest pytest-cov codecov numpy pandas
+      py.test --cov=tableformatter --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html && codecov
     displayName: 'Test with pytest'
+    continueOnError: false
 
     # Publish test results to the Azure DevOps server
   - task: PublishTestResults@2
