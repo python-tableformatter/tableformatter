@@ -948,24 +948,30 @@ class TableFormatter(object):
             entry_opts = dict()
             if use_attribs:
                 # if use_attribs is set, the entries can optionally be a tuple with (object, options)
-                try:
-                    iter(entry)
-                except TypeError:
-                    # not iterable, so we just use the object directly
+                if isinstance(entry, dict):
                     entry_obj = entry
-                    if self._row_tagger is not None:
-                        entry_opts = self._row_tagger(entry_obj)
                 else:
-                    entry_obj = entry[0]
-                    if self._row_tagger is not None:
-                        entry_opts = self._row_tagger(entry_obj)
-                    if len(entry) == 2 and isinstance(entry[1], dict):
-                        entry_opts.update(entry[1])
+                    try:
+                        iter(entry)
+                    except TypeError:
+                        # not iterable, so we just use the object directly
+                        entry_obj = entry
+                        if self._row_tagger is not None:
+                            entry_opts = self._row_tagger(entry_obj)
+                    else:
+                        entry_obj = entry[0]
+                        if self._row_tagger is not None:
+                            entry_opts = self._row_tagger(entry_obj)
+                        if len(entry) == 2 and isinstance(entry[1], dict):
+                            entry_opts.update(entry[1])
 
                 for column_index, attrib_name in enumerate(self._column_attribs):
                     field_obj = None
-                    if isinstance(attrib_name, str) and hasattr(entry_obj, attrib_name):
-                        field_obj = getattr(entry_obj, attrib_name, '')
+                    if isinstance(attrib_name, str):
+                        if hasattr(entry_obj, attrib_name):
+                            field_obj = getattr(entry_obj, attrib_name, '')
+                        elif isinstance(entry_obj, dict) and attrib_name in entry_obj:
+                            field_obj = entry_obj[attrib_name]
                         # if the object attribute is callable, go ahead and call it and get the result
                         if callable(field_obj):
                             field_obj = field_obj()
