@@ -17,6 +17,7 @@ try:
     from typing import Collection
 except ImportError:
     from typing import Container, Generic, Sized, TypeVar
+
     # Python 3.5
     # noinspection PyAbstractClass
     class Collection(Generic[TypeVar('T_co', covariant=True)], Container, Sized, Iterable):
@@ -174,12 +175,12 @@ class _TableTextWrapper(textw.TextWrapper):
                 del chunks[-1]
 
             while chunks:
-                l = _wcswidth(chunks[-1])
+                length = _wcswidth(chunks[-1])
 
                 # Can at least squeeze this chunk onto the current line.
-                if cur_len + l <= width:
+                if cur_len + length <= width:
                     cur_line.append(chunks.pop())
-                    cur_len += l
+                    cur_len += length
 
                 # Nope, this line is full.
                 else:
@@ -197,19 +198,15 @@ class _TableTextWrapper(textw.TextWrapper):
                 del cur_line[-1]
 
             if cur_line:
-                if (self.max_lines is None or
-                    len(lines) + 1 < self.max_lines or
-                    (not chunks or
-                     self.drop_whitespace and
-                     len(chunks) == 1 and
-                     not chunks[0].strip()) and cur_len <= width):
+                if (self.max_lines is None or len(lines) + 1 < self.max_lines
+                        or (not chunks or self.drop_whitespace and len(chunks) == 1 and not chunks[0].strip())
+                        and cur_len <= width):
                     # Convert current line back to a string and store it in
                     # list of all lines (return value).
                     lines.append(indent + ''.join(cur_line))
                 else:
                     while cur_line:
-                        if (cur_line[-1].strip() and
-                                cur_len + _wcswidth(self.placeholder) <= width):
+                        if cur_line[-1].strip() and cur_len + _wcswidth(self.placeholder) <= width:
                             cur_line.append(self.placeholder)
                             lines.append(indent + ''.join(cur_line))
                             break
@@ -218,8 +215,7 @@ class _TableTextWrapper(textw.TextWrapper):
                     else:
                         if lines:
                             prev_line = lines[-1].rstrip()
-                            if (_wcswidth(prev_line) + _wcswidth(self.placeholder) <=
-                                    self.width):
+                            if _wcswidth(prev_line) + _wcswidth(self.placeholder) <= self.width:
                                 lines[-1] = prev_line + self.placeholder
                                 break
                         lines.append(indent + self.placeholder.lstrip())
@@ -233,7 +229,7 @@ def _translate_tabs(text: str) -> str:
     tabpos = text.find('\t')
     while tabpos >= 0:
         before_text = text[:tabpos]
-        after_text = text[tabpos+1:]
+        after_text = text[tabpos + 1:]
         before_width = _wcswidth(before_text)
         tab_pad = TAB_WIDTH - (before_width % TAB_WIDTH)
         text = before_text + '{: <{width}}'.format('', width=tab_pad) + after_text
@@ -351,25 +347,26 @@ def _pad_columns(text: str, pad_char: str, align: Union[ColumnAlignment, str], w
     """Returns a string padded out to the specified width"""
     text = _translate_tabs(text)
     display_width = _printable_width(text)
+    diff = width - display_width
     if display_width >= width:
         return text
 
     if align in (ColumnAlignment.AlignLeft, ColumnAlignment.AlignLeft.format_string()):
         out_text = text
-        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=width-display_width)
+        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
     elif align in (ColumnAlignment.AlignRight, ColumnAlignment.AlignRight.format_string()):
-        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=width-display_width)
+        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
         out_text += text
     elif align in (ColumnAlignment.AlignCenter, ColumnAlignment.AlignCenter.format_string()):
-        lead_pad = int((width - display_width) / 2)
-        tail_pad = width - display_width - lead_pad
+        lead_pad = diff // 2
+        tail_pad = diff - lead_pad
 
         out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=lead_pad)
         out_text += text
         out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=tail_pad)
     else:
         out_text = text
-        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=width-display_width)
+        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
 
     return out_text
 
@@ -565,7 +562,7 @@ class AlternatingRowGrid(FancyGrid):
         bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
         return bg_reset + '║'
 
-    def col_divider_span(self, row_index : Union[int, None]) -> str:
+    def col_divider_span(self, row_index: Union[int, None]) -> str:
         bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
         bg_primary = self.bg_primary if self.bg_primary is not None else TableColors.BG_RESET
         bg_alt = self.bg_alt if self.bg_alt is not None else TableColors.BG_COLOR_ROW
