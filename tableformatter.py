@@ -125,6 +125,45 @@ class _TableTextWrapper(textw.TextWrapper):
         chunks = [c for c in chunks if c]
         return chunks
 
+    def _handle_long_word(self, reversed_chunks, cur_line, cur_len, width):
+        """_handle_long_word(chunks : [string],
+                             cur_line : [string],
+                             cur_len : int, width : int)
+
+        Handle a chunk of text (most likely a word, not whitespace) that
+        is too long to fit in any line.
+        """
+        # Figure out when indent is larger than the specified width, and make
+        # sure at least one character is stripped off on every pass
+        if width < 1:
+            space_left = 1
+        else:
+            space_left = width - cur_len
+
+        # If we're allowed to break long words, then do so: put as much
+        # of the next chunk onto the current line as will fit.
+        if self.break_long_words:
+            shard_length = space_left
+            shard = reversed_chunks[-1][:shard_length]
+            while _wcswidth(shard) > space_left and shard_length > 0:
+                shard_length -= 1
+                shard = reversed_chunks[-1][:shard_length]
+            if shard_length > 0:
+                cur_line.append(shard)
+                reversed_chunks[-1] = reversed_chunks[-1][shard_length:]
+
+        # Otherwise, we have to preserve the long word intact.  Only add
+        # it to the current line if there's nothing already there --
+        # that minimizes how much we violate the width constraint.
+        elif not cur_line:
+            cur_line.append(reversed_chunks.pop())
+
+        # If we're not allowed to break long words, and there's already
+        # text on the current line, do nothing.  Next time through the
+        # main loop of _wrap_chunks(), we'll wind up here again, but
+        # cur_len will be zero, so the next line will be entirely
+        # devoted to the long word that we can't handle right now.
+
     def _wrap_chunks(self, chunks):
         """_wrap_chunks(chunks : [string]) -> [string]
 
