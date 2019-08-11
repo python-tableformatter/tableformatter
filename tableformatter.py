@@ -255,7 +255,7 @@ class TableColors(object):
         TEXT_COLOR_GREEN = fg(119)
         TEXT_COLOR_BLUE = fg(27)
         BG_COLOR_ROW = bg(234)
-        BG_RESET = bg(0)
+        BG_RESET = attr('reset')  # docs say bg(0) should do this but it doesn't work right
         BOLD = attr('bold')
         RESET = attr('reset')
     except ImportError:
@@ -294,7 +294,7 @@ class TableColors(object):
             cls.TEXT_COLOR_GREEN = fg(119)
             cls.TEXT_COLOR_BLUE = fg(27)
             cls.BG_COLOR_ROW = bg(234)
-            cls.BG_RESET = bg(0)
+            cls.BG_RESET = attr('reset')  # docs say bg(0) should do this but it doesn't work right
             cls.BOLD = attr('bold')
             cls.RESET = attr('reset')
         elif library_name == 'colorama':
