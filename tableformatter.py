@@ -309,7 +309,7 @@ class TableColors(object):
             BG_COLOR_ROW = Back.LIGHTBLACK_EX
             BG_RESET = Back.RESET
             BOLD = Style.BRIGHT
-            RESET = Fore.RESET + Back.RESET
+            RESET = Style.NORMAL + Fore.RESET + Back.RESET
         except ImportError:
             TEXT_COLOR_WHITE = ''
             TEXT_COLOR_YELLOW = ''
@@ -347,7 +347,7 @@ class TableColors(object):
             cls.BG_COLOR_ROW = Back.LIGHTBLACK_EX
             cls.BG_RESET = Back.RESET
             cls.BOLD = Style.BRIGHT
-            cls.RESET = Fore.RESET + Back.RESET
+            cls.RESET = Style.NORMAL + Fore.RESET + Back.RESET
         else:
             cls.TEXT_COLOR_WHITE = ''
             cls.TEXT_COLOR_YELLOW = ''
