@@ -17,6 +17,7 @@ try:
     from typing import Collection
 except ImportError:
     from typing import Container, Generic, Sized, TypeVar
+
     # Python 3.5
     # noinspection PyAbstractClass
     class Collection(Generic[TypeVar('T_co', covariant=True)], Container, Sized, Iterable):
@@ -124,6 +125,45 @@ class _TableTextWrapper(textw.TextWrapper):
         chunks = [c for c in chunks if c]
         return chunks
 
+    def _handle_long_word(self, reversed_chunks, cur_line, cur_len, width):
+        """_handle_long_word(chunks : [string],
+                             cur_line : [string],
+                             cur_len : int, width : int)
+
+        Handle a chunk of text (most likely a word, not whitespace) that
+        is too long to fit in any line.
+        """
+        # Figure out when indent is larger than the specified width, and make
+        # sure at least one character is stripped off on every pass
+        if width < 1:
+            space_left = 1
+        else:
+            space_left = width - cur_len
+
+        # If we're allowed to break long words, then do so: put as much
+        # of the next chunk onto the current line as will fit.
+        if self.break_long_words:
+            shard_length = space_left
+            shard = reversed_chunks[-1][:shard_length]
+            while _wcswidth(shard) > space_left and shard_length > 0:
+                shard_length -= 1
+                shard = reversed_chunks[-1][:shard_length]
+            if shard_length > 0:
+                cur_line.append(shard)
+                reversed_chunks[-1] = reversed_chunks[-1][shard_length:]
+
+        # Otherwise, we have to preserve the long word intact.  Only add
+        # it to the current line if there's nothing already there --
+        # that minimizes how much we violate the width constraint.
+        elif not cur_line:
+            cur_line.append(reversed_chunks.pop())
+
+        # If we're not allowed to break long words, and there's already
+        # text on the current line, do nothing.  Next time through the
+        # main loop of _wrap_chunks(), we'll wind up here again, but
+        # cur_len will be zero, so the next line will be entirely
+        # devoted to the long word that we can't handle right now.
+
     def _wrap_chunks(self, chunks):
         """_wrap_chunks(chunks : [string]) -> [string]
 
@@ -174,12 +214,12 @@ class _TableTextWrapper(textw.TextWrapper):
                 del chunks[-1]
 
             while chunks:
-                l = _wcswidth(chunks[-1])
+                length = _wcswidth(chunks[-1])
 
                 # Can at least squeeze this chunk onto the current line.
-                if cur_len + l <= width:
+                if cur_len + length <= width:
                     cur_line.append(chunks.pop())
-                    cur_len += l
+                    cur_len += length
 
                 # Nope, this line is full.
                 else:
@@ -197,19 +237,15 @@ class _TableTextWrapper(textw.TextWrapper):
                 del cur_line[-1]
 
             if cur_line:
-                if (self.max_lines is None or
-                    len(lines) + 1 < self.max_lines or
-                    (not chunks or
-                     self.drop_whitespace and
-                     len(chunks) == 1 and
-                     not chunks[0].strip()) and cur_len <= width):
+                if (self.max_lines is None or len(lines) + 1 < self.max_lines
+                        or (not chunks or self.drop_whitespace and len(chunks) == 1 and not chunks[0].strip())
+                        and cur_len <= width):
                     # Convert current line back to a string and store it in
                     # list of all lines (return value).
                     lines.append(indent + ''.join(cur_line))
                 else:
                     while cur_line:
-                        if (cur_line[-1].strip() and
-                                cur_len + _wcswidth(self.placeholder) <= width):
+                        if cur_line[-1].strip() and cur_len + _wcswidth(self.placeholder) <= width:
                             cur_line.append(self.placeholder)
                             lines.append(indent + ''.join(cur_line))
                             break
@@ -218,8 +254,7 @@ class _TableTextWrapper(textw.TextWrapper):
                     else:
                         if lines:
                             prev_line = lines[-1].rstrip()
-                            if (_wcswidth(prev_line) + _wcswidth(self.placeholder) <=
-                                    self.width):
+                            if _wcswidth(prev_line) + _wcswidth(self.placeholder) <= self.width:
                                 lines[-1] = prev_line + self.placeholder
                                 break
                         lines.append(indent + self.placeholder.lstrip())
@@ -233,7 +268,7 @@ def _translate_tabs(text: str) -> str:
     tabpos = text.find('\t')
     while tabpos >= 0:
         before_text = text[:tabpos]
-        after_text = text[tabpos+1:]
+        after_text = text[tabpos + 1:]
         before_width = _wcswidth(before_text)
         tab_pad = TAB_WIDTH - (before_width % TAB_WIDTH)
         text = before_text + '{: <{width}}'.format('', width=tab_pad) + after_text
@@ -259,7 +294,7 @@ class TableColors(object):
         TEXT_COLOR_GREEN = fg(119)
         TEXT_COLOR_BLUE = fg(27)
         BG_COLOR_ROW = bg(234)
-        BG_RESET = bg(0)
+        BG_RESET = attr('reset')  # docs say bg(0) should do this but it doesn't work right
         BOLD = attr('bold')
         RESET = attr('reset')
     except ImportError:
@@ -298,7 +333,7 @@ class TableColors(object):
             cls.TEXT_COLOR_GREEN = fg(119)
             cls.TEXT_COLOR_BLUE = fg(27)
             cls.BG_COLOR_ROW = bg(234)
-            cls.BG_RESET = bg(0)
+            cls.BG_RESET = attr('reset')  # docs say bg(0) should do this but it doesn't work right
             cls.BOLD = attr('bold')
             cls.RESET = attr('reset')
         elif library_name == 'colorama':
@@ -351,25 +386,26 @@ def _pad_columns(text: str, pad_char: str, align: Union[ColumnAlignment, str], w
     """Returns a string padded out to the specified width"""
     text = _translate_tabs(text)
     display_width = _printable_width(text)
+    diff = width - display_width
     if display_width >= width:
         return text
 
     if align in (ColumnAlignment.AlignLeft, ColumnAlignment.AlignLeft.format_string()):
         out_text = text
-        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=width-display_width)
+        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
     elif align in (ColumnAlignment.AlignRight, ColumnAlignment.AlignRight.format_string()):
-        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=width-display_width)
+        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
         out_text += text
     elif align in (ColumnAlignment.AlignCenter, ColumnAlignment.AlignCenter.format_string()):
-        lead_pad = int((width - display_width) / 2)
-        tail_pad = width - display_width - lead_pad
+        lead_pad = diff // 2
+        tail_pad = diff - lead_pad
 
         out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=lead_pad)
         out_text += text
         out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=tail_pad)
     else:
         out_text = text
-        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=width-display_width)
+        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
 
     return out_text
 
@@ -565,7 +601,7 @@ class AlternatingRowGrid(FancyGrid):
         bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
         return bg_reset + '║'
 
-    def col_divider_span(self, row_index : Union[int, None]) -> str:
+    def col_divider_span(self, row_index: Union[int, None]) -> str:
         bg_reset = self.bg_reset if self.bg_reset is not None else TableColors.BG_RESET
         bg_primary = self.bg_primary if self.bg_primary is not None else TableColors.BG_RESET
         bg_alt = self.bg_alt if self.bg_alt is not None else TableColors.BG_COLOR_ROW
@@ -948,24 +984,30 @@ class TableFormatter(object):
             entry_opts = dict()
             if use_attribs:
                 # if use_attribs is set, the entries can optionally be a tuple with (object, options)
-                try:
-                    iter(entry)
-                except TypeError:
-                    # not iterable, so we just use the object directly
+                if isinstance(entry, dict):
                     entry_obj = entry
-                    if self._row_tagger is not None:
-                        entry_opts = self._row_tagger(entry_obj)
                 else:
-                    entry_obj = entry[0]
-                    if self._row_tagger is not None:
-                        entry_opts = self._row_tagger(entry_obj)
-                    if len(entry) == 2 and isinstance(entry[1], dict):
-                        entry_opts.update(entry[1])
+                    try:
+                        iter(entry)
+                    except TypeError:
+                        # not iterable, so we just use the object directly
+                        entry_obj = entry
+                        if self._row_tagger is not None:
+                            entry_opts = self._row_tagger(entry_obj)
+                    else:
+                        entry_obj = entry[0]
+                        if self._row_tagger is not None:
+                            entry_opts = self._row_tagger(entry_obj)
+                        if len(entry) == 2 and isinstance(entry[1], dict):
+                            entry_opts.update(entry[1])
 
                 for column_index, attrib_name in enumerate(self._column_attribs):
                     field_obj = None
-                    if isinstance(attrib_name, str) and hasattr(entry_obj, attrib_name):
-                        field_obj = getattr(entry_obj, attrib_name, '')
+                    if isinstance(attrib_name, str):
+                        if hasattr(entry_obj, attrib_name):
+                            field_obj = getattr(entry_obj, attrib_name, '')
+                        elif isinstance(entry_obj, dict) and attrib_name in entry_obj:
+                            field_obj = entry_obj[attrib_name]
                         # if the object attribute is callable, go ahead and call it and get the result
                         if callable(field_obj):
                             field_obj = field_obj()

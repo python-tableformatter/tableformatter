@@ -29,5 +29,5 @@ rows = [('A1', 'A2', 'A3', 'A4'),
 
 columns = ('Col1', 'Col2', 'Col3', 'Col4')
 
-print("Table with colorful alternting rows")
+print("Table with colorful alternating rows")
 print(generate_table(rows, columns, grid_style=tf.AlternatingRowGrid(BACK_GREEN, BACK_BLUE)))

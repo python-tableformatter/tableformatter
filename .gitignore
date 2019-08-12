@@ -21,3 +21,7 @@ htmlcov
 # mypy optional static type checker
 .mypy_cache
 *~
+
+# Pipenv (this is a library, not an application)
+.venv
+Pipfile.lock
