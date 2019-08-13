@@ -1,5 +1,11 @@
-## 0.1.4 (TBD, 2018)
-* TBD 
+## 0.1.4 (August 12, 2019)
+* Bug fixes
+    * Fix colors getting messed up when using the colored library
+    * Fix issue wrapping text with wide-display unicode characters
+* Enhancements
+    * Added support for dictionaries as row objects. attrib will be used as the column key
+    * Changed default colored row BG color to be 50% gray
+        * So it is equally visible on black and white backgrounds
 
 ## 0.1.3 (August 18, 2018)
 * Improved support for Pandas DataFrame, Numpy RecordArray, and dict tabular data types 
