@@ -10,5 +10,6 @@ wcwidth = "*"
 tableformatter = {editable = true,path = "."}
 flake8 = "*"
 invoke = "*"
+ipython = "*"
 pytest = "*"
 pytest-cov = "*"
