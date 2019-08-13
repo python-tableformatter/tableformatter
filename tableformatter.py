@@ -293,7 +293,7 @@ class TableColors(object):
         TEXT_COLOR_RED = fg(196)
         TEXT_COLOR_GREEN = fg(119)
         TEXT_COLOR_BLUE = fg(27)
-        BG_COLOR_ROW = bg(234)
+        BG_COLOR_ROW = bg(244)
         BG_RESET = attr('reset')  # docs say bg(0) should do this but it doesn't work right
         BOLD = attr('bold')
         RESET = attr('reset')
@@ -309,7 +309,7 @@ class TableColors(object):
             BG_COLOR_ROW = Back.LIGHTBLACK_EX
             BG_RESET = Back.RESET
             BOLD = Style.BRIGHT
-            RESET = Fore.RESET + Back.RESET
+            RESET = Style.NORMAL + Fore.RESET + Back.RESET
         except ImportError:
             TEXT_COLOR_WHITE = ''
             TEXT_COLOR_YELLOW = ''
@@ -332,7 +332,7 @@ class TableColors(object):
             cls.TEXT_COLOR_RED = fg(196)
             cls.TEXT_COLOR_GREEN = fg(119)
             cls.TEXT_COLOR_BLUE = fg(27)
-            cls.BG_COLOR_ROW = bg(234)
+            cls.BG_COLOR_ROW = bg(244)
             cls.BG_RESET = attr('reset')  # docs say bg(0) should do this but it doesn't work right
             cls.BOLD = attr('bold')
             cls.RESET = attr('reset')
@@ -347,7 +347,7 @@ class TableColors(object):
             cls.BG_COLOR_ROW = Back.LIGHTBLACK_EX
             cls.BG_RESET = Back.RESET
             cls.BOLD = Style.BRIGHT
-            cls.RESET = Fore.RESET + Back.RESET
+            cls.RESET = Style.NORMAL + Fore.RESET + Back.RESET
         else:
             cls.TEXT_COLOR_WHITE = ''
             cls.TEXT_COLOR_YELLOW = ''
