@@ -8,6 +8,7 @@ from wcwidth import wcswidth
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
 TAB_WIDTH = 4
 
+
 def _text_wrap(text: str, width: int=70) -> List[str]:
     """Wrap a single paragraph of text, returning a list of wrapped lines.
 

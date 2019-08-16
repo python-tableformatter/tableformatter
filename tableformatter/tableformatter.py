@@ -10,7 +10,7 @@ from .text_utils import _text_wrap, _printable_width, _translate_tabs, _TableTex
 from .typing_wrapper import Iterable, Tuple, Union, Callable, Collection
 
 
-__version__ = '0.1.4'
+__version__ = '0.2.0'
 ELLIPSIS = '…'
 
 
@@ -40,15 +40,6 @@ def _pad_columns(text: str, pad_char: str, align: Union[ColumnAlignment, str], w
         out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
 
     return out_text
-
-
-DEFAULT_GRID = AlternatingRowGrid()
-
-
-def set_default_grid(grid: Grid) -> None:
-    global DEFAULT_GRID
-    if grid is not None:
-        DEFAULT_GRID = grid
 
 
 class TableFormatter(object):
