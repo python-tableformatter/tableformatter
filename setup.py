@@ -54,7 +54,7 @@ setup(
     url='https://github.com/python-tableformatter/tableformatter',
     license='MIT',
     platforms=['any'],
-    py_modules=['tableformatter'],
+    packages=['tableformatter'],
     keywords='table tabular formatter',
     python_requires='>=3.4',
     install_requires=INSTALL_REQUIRES,
