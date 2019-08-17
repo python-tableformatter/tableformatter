@@ -1,4 +1,6 @@
 # coding=utf-8
+# flake8: noqa F401
+"""Simple wrapper around typing so all types can be imported from one place for all supported versions of Python"""
 from typing import Union, Iterable, Callable, Optional, Tuple
 
 

@@ -103,9 +103,9 @@ class TableFormatter(object):
                 self._column_names.append(str(column))
 
         if use_attribs:
-            for col_index, attrib in enumerate(self._column_attribs):
-                if attrib is None and Options.COL_OPT_OBJECT_FORMATTER not in self._column_opts[col_index]:
-                    raise ValueError('Attribute name or Object formatter is required for {}'.format(self._column_names[col_index]))
+            for col_ind, attrib in enumerate(self._column_attribs):
+                if attrib is None and Options.COL_OPT_OBJECT_FORMATTER not in self._column_opts[col_ind]:
+                    raise ValueError('Attribute name or Object formatter required for {}'.format(self._column_names[col_ind]))
 
     def set_default_header_alignment(self,
                                      horiz_align: ColumnAlignment = ColumnAlignment.AlignLeft,
@@ -135,7 +135,7 @@ class TableFormatter(object):
         :param column: column position this applies to
         :param format_function: function to call to format the value. Signature: def myfunction(field_value):
         """
-        self._set_column_option(column, Options.COL_OPT_FIELD_FORMATTER,  format_function)
+        self._set_column_option(column, Options.COL_OPT_FIELD_FORMATTER, format_function)
 
     def set_header_alignment(self,
                              column: Union[int, str],
@@ -163,6 +163,8 @@ class TableFormatter(object):
         self._set_column_option(column, Options.COL_OPT_CELL_HALIGN, horiz_align)
         self._set_column_option(column, Options.COL_OPT_CELL_VALIGN, vert_align)
 
+    # TODO: Reduce the cyclomatic complexity of generate_table which is currently at 106!
+    # flake8: noqa F401
     def generate_table(self, entries: Iterable[Union[Iterable, object]], force_transpose=False):
         """
         Generate the table from a list of entries

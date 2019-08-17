@@ -1,7 +1,8 @@
 # coding=utf-8
+import enum
+
 from .colors import TableColors
 from .typing_wrapper import Callable, Union
-import enum
 
 
 class Options(object):

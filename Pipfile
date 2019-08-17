@@ -5,12 +5,17 @@ verify_ssl = true
 
 [packages]
 wcwidth = "*"
+typing = {version = "*",markers = "python_version < '3.5'"}
 
 [dev-packages]
 tableformatter = {editable = true,path = "."}
+colorama = "*"
 flake8 = "*"
 invoke = "*"
 ipython = "*"
 pytest = "*"
 pytest-cov = "*"
 twine = ">=1.11"
+cmd2 = "*"
+numpy = "*"
+pandas = "*"

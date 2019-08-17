@@ -86,6 +86,7 @@ def tag_row_obj(row_obj: MyRowObject) -> dict:
         opts[tf.Options.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
     return opts
 
+
 rows = [MyRowObject(None, None, 17, 4),
         MyRowObject('123', '123', 5, 56),
         MyRowObject(123, 123, 5, 56),
