@@ -2,9 +2,8 @@
 """
 Formats data into a table
 """
-
 from .colors import TableColors
-from .grids import AlternatingRowGrid, Grid
+from .constants import DEFAULT_GRID
 from .model import WrapMode, ColumnAlignment, Options
 from .text_utils import _text_wrap, _printable_width, _translate_tabs, _TableTextWrapper
 from .typing_wrapper import Iterable, Tuple, Union, Callable, Collection
@@ -105,9 +104,8 @@ class TableFormatter(object):
 
         if use_attribs:
             for col_index, attrib in enumerate(self._column_attribs):
-                if attrib is None:
-                    if Options.COL_OPT_OBJECT_FORMATTER not in self._column_opts[col_index]:
-                        raise ValueError('Attribute name or Object formatter is required for {}'.format(self._column_names[col_index]))
+                if attrib is None and Options.COL_OPT_OBJECT_FORMATTER not in self._column_opts[col_index]:
+                    raise ValueError('Attribute name or Object formatter is required for {}'.format(self._column_names[col_index]))
 
     def set_default_header_alignment(self,
                                      horiz_align: ColumnAlignment = ColumnAlignment.AlignLeft,

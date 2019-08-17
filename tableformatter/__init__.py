@@ -1,5 +1,7 @@
 # coding=utf-8
+# flake8: noqa F401
 from .colors import TableColors
+from .constants import DEFAULT_GRID, set_default_grid
 from .formatters import FormatBytes, FormatCommas
 from .grids import FancyGrid, SparseGrid, AlternatingRowGrid, Grid
 from .model import Column, Row, ColumnAlignment, Options, WrapMode
@@ -7,15 +9,6 @@ from .tableformatter import TableFormatter
 from .typing_wrapper import Iterable, Union, Collection, Tuple, Optional, Callable
 
 import itertools
-
-
-DEFAULT_GRID = AlternatingRowGrid()
-
-
-def set_default_grid(grid: Grid) -> None:
-    global DEFAULT_GRID
-    if grid is not None:
-        DEFAULT_GRID = grid
 
 
 def generate_table(rows: Iterable[Union[Iterable, object]],

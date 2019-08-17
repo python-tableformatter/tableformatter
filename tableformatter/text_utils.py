@@ -248,6 +248,3 @@ def _translate_tabs(text: str) -> str:
 def _printable_width(text: str) -> int:
     """Returns the printable width of a string accounting for escape characters and wide-display unicode characters"""
     return _wcswidth(_translate_tabs(text))
-    
-    
-    

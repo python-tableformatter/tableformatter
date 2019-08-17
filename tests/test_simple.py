@@ -1,4 +1,5 @@
 # coding=utf-8
+# flake8: noqa E302
 """
 Unit testing of tableformatter with simple cases
 - with a list of tuples as table entries

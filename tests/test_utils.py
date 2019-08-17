@@ -1,10 +1,10 @@
 # coding=utf-8
+# flake8: noqa E302
 """
 Unit testing of tableformatter utility functions.
 """
 import pytest
 
-import tableformatter as tf
 from tableformatter.text_utils import _text_wrap, _translate_tabs, _printable_width
 
 

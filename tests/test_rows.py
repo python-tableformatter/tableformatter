@@ -4,8 +4,6 @@ Unit testing of tableformatter with simple cases
 - with a list of tuples as table entries
 - using a list of objects for the table entries
 """
-import pytest
-
 import tableformatter as tf
 
 # Make the test results reproducible regardless of what color libraries are installed
