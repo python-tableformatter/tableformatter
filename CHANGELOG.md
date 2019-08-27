@@ -1,3 +1,11 @@
+## 0.2.0 (TBD)
+* Breaking Changes
+    * Internal structure of tableformatter was changed as part of the 0.2 re-architecture effort. Notably, 
+      tableformatter components have been separated into separate modules placed in a package matching the original
+      module name. The package has been configured to import components such that most existing code will still function
+      with these changes.
+    * all of the options keys that were in TableFormatter (ROW_OPT_*, COL_OPT_*, TABLE_OPT_*) have been moved to .model.Options
+
 ## 0.1.4 (August 12, 2019)
 * Bug fixes
     * Fix colors getting messed up when using the colored library

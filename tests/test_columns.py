@@ -246,4 +246,3 @@ def test_truncate_hard_field_formatter(obj_rows):
 ╚══════════════════════╧════════╧═══════╧═══════════╧════════════╝
 '''.lstrip('\n')
     assert table == expected
-

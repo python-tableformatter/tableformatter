@@ -45,8 +45,8 @@ print(tf.generate_table(pandas_dataframe))
 
 d1 = {1: 'a', 2: 'b', 3: 'c', 4: 'd'}
 d2 = {5: 'e', 6: 'f', 7: 'g', 8: 'h'}
-iterable_of_dicts = [ OrderedDict(sorted(d1.items(), key=lambda t: t[0])),
-                      OrderedDict(sorted(d2.items(), key=lambda t: t[0]))]
+iterable_of_dicts = [OrderedDict(sorted(d1.items(), key=lambda t: t[0])),
+                     OrderedDict(sorted(d2.items(), key=lambda t: t[0]))]
 print("Data type: iterable of dicts (dict keys iterated through as column values)")
 print(iterable_of_dicts)
 print(tf.generate_table(iterable_of_dicts))

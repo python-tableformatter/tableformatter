@@ -27,6 +27,7 @@ from typing import Tuple
 
 import cmd2
 import tableformatter as tf
+from tableformatter.model import Options
 
 # Configure colors for when users chooses the "-c" flag to enable color in the table output
 try:
@@ -142,7 +143,7 @@ def high_density_tuples(row_tuple: Tuple) -> dict:
     """Color rows with extremely high population density red."""
     opts = dict()
     if len(row_tuple) >= 7 and row_tuple[6] > EXTREMELY_HIGH_POULATION_DENSITY:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_RED
+        opts[Options.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_RED
     return opts
 
 
@@ -150,7 +151,7 @@ def high_density_objs(row_obj: CityInfo) -> dict:
     """Color rows with extremely high population density red."""
     opts = dict()
     if float(pop_density(row_obj)) > EXTREMELY_HIGH_POULATION_DENSITY:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_RED
+        opts[Options.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_RED
     return opts
 
 

@@ -51,13 +51,14 @@ to this function is ``rows`` which is an Iterable of Iterables such as a list of
 a 2D [numpy](http://www.numpy.org) array.  ``generate_table`` outputs a nicely formatted table:
 
 ```Python
+import tableformatter
 import tableformatter as tf
 
 rows = [('A1', 'A2', 'A3', 'A4'),
         ('B1', 'B2\nB2\nB2', 'B3', 'B4'),
         ('C1', 'C2', 'C3', 'C4'),
         ('D1', 'D2', 'D3', 'D4')]
-print(tf.generate_table(rows))
+print(tableformatter.generate_table(rows))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ║ B1 │ B2 │ B3 │ B4 ║

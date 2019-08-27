@@ -3,8 +3,11 @@
 """
 Demonstration of field and object formatters for both object and tuple based table entries
 """
+import tableformatter
 import tableformatter as tf
 from typing import Tuple
+
+import tableformatter.model
 
 
 class MyRowObject(object):
@@ -80,8 +83,9 @@ def tag_row_obj(row_obj: MyRowObject) -> dict:
     optional properties"""
     opts = dict()
     if row_obj.field4 % 4 == 0:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
+        opts[tf.Options.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
     return opts
+
 
 rows = [MyRowObject(None, None, 17, 4),
         MyRowObject('123', '123', 5, 56),
@@ -100,7 +104,7 @@ columns = (tf.Column('First', width=20, attrib='field1', formatter=tf.FormatByte
            tf.Column('Multiplied', obj_formatter=multiply))
 
 print("Formatters on object-based row entries")
-print(tf.generate_table(rows, columns, row_tagger=tag_row_obj))
+print(tableformatter.generate_table(rows, columns, row_tagger=tag_row_obj))
 
 
 def tag_row_tuples(row_tuple: Tuple) -> dict:
@@ -112,7 +116,7 @@ def tag_row_tuples(row_tuple: Tuple) -> dict:
     """
     opts = dict()
     if len(row_tuple) >= 4 and row_tuple[3] % 4 == 0:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
+        opts[tf.Options.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
     return opts
 
 
@@ -131,4 +135,4 @@ columns = (tf.Column('First', width=20, formatter=tf.FormatBytes(), cell_halign=
            tf.Column('Multiplied', obj_formatter=multiply_tuple))
 
 print("Formatters on tuple-based row entries")
-print(tf.generate_table(rows, columns, row_tagger=tag_row_tuples))
+print(tableformatter.generate_table(rows, columns, row_tagger=tag_row_tuples))
