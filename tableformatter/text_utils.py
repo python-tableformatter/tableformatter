@@ -2,8 +2,10 @@
 
 import re
 import textwrap as textw
-from typing import List
+from typing import List, Union
 from wcwidth import wcswidth
+
+from tableformatter import ColumnAlignment
 
 ANSI_ESCAPE_RE = re.compile(r'\x1b[^m]*m')
 TAB_WIDTH = 4
@@ -248,3 +250,31 @@ def _translate_tabs(text: str) -> str:
 def _printable_width(text: str) -> int:
     """Returns the printable width of a string accounting for escape characters and wide-display unicode characters"""
     return _wcswidth(_translate_tabs(text))
+
+
+def _pad_columns(text: str, pad_char: str, align: Union[ColumnAlignment, str], width: int):
+    """Returns a string padded out to the specified width"""
+    text = _translate_tabs(text)
+    display_width = _printable_width(text)
+    diff = width - display_width
+    if display_width >= width:
+        return text
+
+    if align in (ColumnAlignment.AlignLeft, ColumnAlignment.AlignLeft.format_string()):
+        out_text = text
+        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
+    elif align in (ColumnAlignment.AlignRight, ColumnAlignment.AlignRight.format_string()):
+        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
+        out_text += text
+    elif align in (ColumnAlignment.AlignCenter, ColumnAlignment.AlignCenter.format_string()):
+        lead_pad = diff // 2
+        tail_pad = diff - lead_pad
+
+        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=lead_pad)
+        out_text += text
+        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=tail_pad)
+    else:
+        out_text = text
+        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
+
+    return out_text

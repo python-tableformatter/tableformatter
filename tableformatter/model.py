@@ -1,7 +1,11 @@
 # coding=utf-8
+"""
+Table model objects
+"""
 import enum
 
 from .colors import TableColors
+# from .tableformatter import TableFormatter
 from .typing_wrapper import Callable, Union
 
 
@@ -137,3 +141,81 @@ def Row(*args, text_color: Union[TableColors, str] = None):
     if opts:
         row.append(opts)
     return tuple(row)
+
+
+class RowObject(list):
+    """Acts like a list of CellObject, holds row metadata"""
+    def __init__(self):
+        super().__init__()
+        pass
+
+
+class CellObject(list):
+    """Acts like a list of strings representing each line of text in a cell"""
+    pass
+
+
+class ColumnObject(object):
+
+    def __init__(self,
+                 table: "TableFormatter",
+                 table_index: int,
+                 heading_text: str,
+                 *,
+                 min_width: int = 0,
+                 max_width: int = -1,
+                 wrap_mode: WrapMode = WrapMode.WRAP,
+
+                 **kwargs
+                 ):
+        self._table = table
+        self._table_index = table_index
+
+        # Configuration values
+        self._heading_text = heading_text
+        self._max_width = None
+        self._min_width = None
+        self._wrap_mode = None
+        self._header_halign = None
+        self._header_valign = None
+        self._cell_halign = None
+        self._cell_valign = None
+        self._cell_padding = None
+
+        self._object_attrib_name = None
+        self._field_formatter = None  # Callable that processes the value in the column to generate cell text
+        self._obj_formmater = None    # Callable that processes the entire raw object for the row to generate cell text
+
+        # Selected values
+        self._width = 0
+
+        # load named arguments
+        self._table_index = table_index,
+
+        # load arguments from opts dict
+        if Options.COL_OPT_WIDTH in kwargs and kwargs[Options.COL_OPT_WIDTH] is not None:
+            self._max_width = kwargs[Options.COL_OPT_WIDTH]
+        if Options.COL_OPT_ATTRIB_NAME in kwargs and kwargs[Options.COL_OPT_ATTRIB_NAME] is not None:
+            self._object_attrib_name = kwargs[Options.COL_OPT_ATTRIB_NAME]
+        if Options.COL_OPT_WRAP_MODE in kwargs and kwargs[Options.COL_OPT_WRAP_MODE] is not None:
+            self._wrap_mode = kwargs[Options.COL_OPT_WRAP_MODE]
+        if Options.COL_OPT_WRAP_INDENT_PREFIX in kwargs and kwargs[Options.COL_OPT_WRAP_INDENT_PREFIX] is not None:
+            self._wrap_prefix = kwargs[Options.COL_OPT_WRAP_INDENT_PREFIX]
+        if Options.COL_OPT_CELL_PADDING in kwargs and kwargs[Options.COL_OPT_CELL_PADDING] is not None:
+            self._cell_padding = kwargs[Options.COL_OPT_CELL_PADDING]
+        if Options.COL_OPT_HEADER_HALIGN in kwargs and kwargs[Options.COL_OPT_HEADER_HALIGN] is not None:
+            self._header_halign = kwargs[Options.COL_OPT_HEADER_HALIGN]
+        if Options.COL_OPT_HEADER_VALIGN in kwargs and kwargs[Options.COL_OPT_HEADER_VALIGN] is not None:
+            self._header_valign = kwargs[Options.COL_OPT_HEADER_VALIGN]
+        if Options.COL_OPT_CELL_HALIGN in kwargs and kwargs[Options.COL_OPT_CELL_HALIGN] is not None:
+            self._cell_halign = kwargs[Options.COL_OPT_CELL_HALIGN]
+        if Options.COL_OPT_CELL_VALIGN in kwargs and kwargs[Options.COL_OPT_CELL_VALIGN] is not None:
+            self._cell_valign = kwargs[Options.COL_OPT_CELL_VALIGN]
+        if Options.COL_OPT_FIELD_FORMATTER in kwargs and kwargs[Options.COL_OPT_FIELD_FORMATTER] is not None:
+            self._field_formatter = kwargs[Options.COL_OPT_FIELD_FORMATTER]
+        if Options.COL_OPT_OBJECT_FORMATTER in kwargs and kwargs[Options.COL_OPT_OBJECT_FORMATTER] is not None:
+            self._obj_formatter = kwargs[Options.COL_OPT_OBJECT_FORMATTER]
+
+    def set_table(self, table: "TableFormatter", index: int):
+        self._table = table
+        self._table_index = index

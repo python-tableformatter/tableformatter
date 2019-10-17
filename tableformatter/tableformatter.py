@@ -1,44 +1,30 @@
 # coding=utf-8
 """
-Formats data into a table
+Formats data into a table.
+
+
+Steps:
+Detect input: Categorize input into known types (List of lists of strings, list of objects, list of dicts)
+Normalize Column Specifier: Process column specifiers into standard ColumnSpec objects.
+Extract/Normalize Data: Inspect input, call functions if needed, store raw data in a standard RowObject/CellObject
+                        RowObject should retain reference to original input row without modification.
+                        If column specifier has a obj_formatter - generate cell data with obj_formatter
+Decorate RowObject: If row decorator provided, decorate row object
+Decorate Cells: Call column and row decorator functions and decorate each cell with metadata
+Render Data to String: Check each cell for its formatter function to render raw data into strings. Track max string width
+Transpose Data: if specified
+Align/wrap cell text: using column wrapping properties or custom wrapping function,
+Render table: apply per-cell properties
 """
 from .colors import TableColors
 from .constants import DEFAULT_GRID
-from .model import WrapMode, ColumnAlignment, Options
-from .text_utils import _text_wrap, _printable_width, _translate_tabs, _TableTextWrapper
-from .typing_wrapper import Iterable, Tuple, Union, Callable, Collection
+from .model import WrapMode, ColumnAlignment, Options, ColumnObject
+from .text_utils import _text_wrap, _printable_width, _TableTextWrapper, _pad_columns
+from .typing_wrapper import Iterable, Tuple, Union, Callable, Collection, List
 
 
 __version__ = '0.2.0'
 ELLIPSIS = '…'
-
-
-def _pad_columns(text: str, pad_char: str, align: Union[ColumnAlignment, str], width: int):
-    """Returns a string padded out to the specified width"""
-    text = _translate_tabs(text)
-    display_width = _printable_width(text)
-    diff = width - display_width
-    if display_width >= width:
-        return text
-
-    if align in (ColumnAlignment.AlignLeft, ColumnAlignment.AlignLeft.format_string()):
-        out_text = text
-        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
-    elif align in (ColumnAlignment.AlignRight, ColumnAlignment.AlignRight.format_string()):
-        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
-        out_text += text
-    elif align in (ColumnAlignment.AlignCenter, ColumnAlignment.AlignCenter.format_string()):
-        lead_pad = diff // 2
-        tail_pad = diff - lead_pad
-
-        out_text = '{:{pad}<{width}}'.format('', pad=pad_char, width=lead_pad)
-        out_text += text
-        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=tail_pad)
-    else:
-        out_text = text
-        out_text += '{:{pad}<{width}}'.format('', pad=pad_char, width=diff)
-
-    return out_text
 
 
 class TableFormatter(object):
@@ -49,7 +35,7 @@ class TableFormatter(object):
     """
 
     def __init__(self,
-                 columns: Collection[Union[str, Tuple[str, dict]]],
+                 columns: Collection[Union[ColumnObject, str, Tuple[str, dict]]],
                  cell_padding: int = 1,
                  max_column_width: int = 0,
                  default_header_horiz_align: ColumnAlignment = ColumnAlignment.AlignLeft,
@@ -651,4 +637,20 @@ class TableFormatter(object):
             return '{0:{cell_padding}}'.format('', cell_padding=pad_width)
         return ''
 
-
+    def _normalize_columns(self, columns: Collection[Union[ColumnObject, str, Tuple[str, dict]]]) -> List[ColumnObject]:
+        out = []
+        for index, column in enumerate(columns):
+            if isinstance(column, ColumnObject):
+                column.set_table(self, index)
+                out.append(column)
+            elif isinstance(column, str):
+                out.append(ColumnObject(self, index, column))
+            elif isinstance(column, Tuple) and\
+                    len(column) == 2 and\
+                    isinstance(column[0], str) and\
+                    isinstance(column[1], dict):
+                col_obj = ColumnObject(self, index, column[0], **(column[1]))
+                out.append(col_obj)
+            else:
+                out.append(ColumnObject(self, index, str(column)))
+        return out
