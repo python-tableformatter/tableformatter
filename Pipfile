@@ -4,12 +4,13 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [packages]
+tableformatter = {editable = true,path = "."}
 wcwidth = "*"
 typing = {version = "*",markers = "python_version < '3.5'"}
 
 [dev-packages]
-tableformatter = {editable = true,path = "."}
 colorama = "*"
+colored = "*"
 flake8 = "*"
 invoke = "*"
 ipython = "*"
