@@ -7,6 +7,7 @@ Unit testing of tableformatter with simple cases
 import pytest
 
 import tableformatter as tf
+from collections import namedtuple
 
 # Make the test results reproducible regardless of what color libraries are installed
 tf.TableColors.set_color_library('none')
@@ -26,9 +27,17 @@ class MyRowObject(object):
         return self._field3
 
 
+NamedTupleRow = namedtuple('NamedTupleRow', 'field1,field2,field3,field4')
+"""Example named tuple to demonstrate usage with TableFormatter"""
+
+
 def multiply(row_obj: MyRowObject):
     """Demonstrates an object formatter function"""
     return str(row_obj.get_field3() * row_obj.field4)
+
+
+def multiply_named_tuple(row_job):
+    return str(row_job.field3 * row_job.field4)
 
 
 def multiply_tuple(row_obj):
@@ -113,6 +122,38 @@ def test_obj_rows():
                tf.Column('Num 1', width=3, attrib='get_field3'),
                tf.Column('Num 2', attrib='field4'),
                tf.Column('Multiplied', obj_formatter=multiply))
+    table = tf.generate_table(rows, columns)
+    assert table == expected
+
+
+def test_namedtuple_rows():
+    expected = '''
+╔══════════════════════╤════════╤═════╤═══════╤════════════╗
+║                      │        │ Num │       │            ║
+║ First                │ Second │ 1   │ Num 2 │ Multiplied ║
+╠══════════════════════╪════════╪═════╪═══════╪════════════╣
+║ RLonger text that     │ RA2     │ R5   │ R56    │ R280        ║
+║ Rwill trigger the     │        │     │       │            ║
+║ Rcolumn wrapping      │        │     │       │            ║
+║ GB1                   │ GB2     │ G23  │ G8     │ G184        ║
+║                      │ GB2     │     │       │            ║
+║                      │ GB2     │     │       │            ║
+║ C1                   │ C2     │ 4   │ 9     │ 36         ║
+║ D1                   │ D2     │ 7   │ 5     │ 35         ║
+╚══════════════════════╧════════╧═════╧═══════╧════════════╝
+'''.lstrip('\n')
+    rows = [tf.Row(NamedTupleRow('Longer text that will trigger the column wrapping', 'A2', 5, 56),
+                   text_color='R'),
+            tf.Row(NamedTupleRow('B1', 'B2\nB2\nB2', 23, 8),
+                   text_color='G'),
+            NamedTupleRow('C1', 'C2', 4, 9),
+            NamedTupleRow('D1', 'D2', 7, 5)]
+
+    columns = (tf.Column('First', width=20, attrib='field1'),
+               tf.Column('Second', attrib='field2'),
+               tf.Column('Num 1', width=3, attrib='field3'),
+               tf.Column('Num 2', attrib='field4'),
+               tf.Column('Multiplied', obj_formatter=multiply_named_tuple))
     table = tf.generate_table(rows, columns)
     assert table == expected
 
