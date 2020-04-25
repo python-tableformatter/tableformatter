@@ -1,3 +1,9 @@
+## 0.1.5 (TBD)
+* Bug fixes
+    * Fixes issue with handling namedtuples as row ojbects
+* Documentation
+    * Added examples for writing terminal escape sequences to a file
+
 ## 0.1.4 (August 12, 2019)
 * Bug fixes
     * Fix colors getting messed up when using the colored library
