@@ -995,7 +995,12 @@ class TableFormatter(object):
                         if self._row_tagger is not None:
                             entry_opts = self._row_tagger(entry_obj)
                     else:
-                        entry_obj = entry[0]
+                        # check if this is a tuple containing a dictionary of decorated values. If so, the row object
+                        # is the first element a the decorated values is the second element.
+                        if len(entry) == 2 and isinstance(entry[1], dict):
+                            entry_obj = entry[0]
+                        else:
+                            entry_obj = entry
                         if self._row_tagger is not None:
                             entry_opts = self._row_tagger(entry_obj)
                         if len(entry) == 2 and isinstance(entry[1], dict):
