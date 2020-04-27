@@ -9,7 +9,7 @@ jobs:
 
   # Configure Build Environment to use Azure Pipelines to build tableformatter Python project using macOS
   pool:
-    vmImage: 'macOS 10.13'  # other options 'Ubuntu 16.04', 'VS2017-Win2016'
+    vmImage: 'macOS-latest'
 
   # Run the pipeline with multiple Python versions
   strategy:
@@ -20,6 +20,8 @@ jobs:
         python.version: '3.6'
       Python37:
         python.version: '3.7'
+      Python38:
+        python.version: '3.8'
     # Increase the maxParallel value to simultaneously run the job for all versions in the matrix (max 10 for free open-source)
     maxParallel: 3
 
