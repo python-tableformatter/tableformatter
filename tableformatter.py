@@ -7,7 +7,7 @@ import enum
 import itertools
 import re
 import textwrap as textw
-from typing import List, Iterable, Optional, Tuple, Union, Callable
+from typing import List, Iterable, Optional, Tuple, Union, Callable, Sequence
 
 from wcwidth import wcswidth
 
@@ -18,9 +18,10 @@ try:
 except ImportError:
     from typing import Container, Generic, Sized, TypeVar
 
+    T_co = TypeVar('T_co', covariant=True)
     # Python 3.5
     # noinspection PyAbstractClass
-    class Collection(Generic[TypeVar('T_co', covariant=True)], Container, Sized, Iterable):
+    class Collection(Generic[T_co], Container, Sized, Iterable):
         """hack to enable Collection typing"""
         __slots__ = ()
 
@@ -997,13 +998,18 @@ class TableFormatter(object):
                     else:
                         # check if this is a tuple containing a dictionary of decorated values. If so, the row object
                         # is the first element a the decorated values is the second element.
-                        if len(entry) == 2 and isinstance(entry[1], dict):
-                            entry_obj = entry[0]
-                        else:
+                        is_tagged = False
+                        try:
+                            if isinstance(entry, Sequence) and len(entry) == 2 and isinstance(entry[1], dict):
+                                entry_obj = entry[0]
+                                is_tagged = True
+                            else:
+                                entry_obj = entry
+                        except KeyError:
                             entry_obj = entry
                         if self._row_tagger is not None:
                             entry_opts = self._row_tagger(entry_obj)
-                        if len(entry) == 2 and isinstance(entry[1], dict):
+                        if is_tagged:
                             entry_opts.update(entry[1])
 
                 for column_index, attrib_name in enumerate(self._column_attribs):
