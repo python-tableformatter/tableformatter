@@ -3,6 +3,8 @@
 Unit testing the variety of data types supported by tableformatter.
 """
 from collections import OrderedDict
+from typing import Iterator
+
 import tableformatter as tf
 
 
@@ -66,6 +68,47 @@ def test_iterable_of_non_iterable_objects():
     columns = (tf.Column('col1', attrib='field1'),
                tf.Column('col2', attrib='field2'),
                tf.Column('col3', attrib='get_field3'),
+               tf.Column('col4', attrib='field4'))
+    table = tf.generate_table(rows, columns)
+    assert table == EXPECTED_WITH_HEADERS
+
+
+class NonIndexableRowObject:
+    def __init__(self, field1: int, field2: int, field3: int, field4: int):
+        self.field1 = field1
+        self.field2 = field2
+        self._field3 = field3
+        self.field4 = field4
+
+    @property
+    def field3(self) -> int:
+        return self._field3
+
+    def __getitem__(self, key: str) -> int:
+        if key == 'field1':
+            return self.field1
+        elif key == 'field2':
+            return self.field2
+        elif key == 'field3':
+            return self.field3
+        elif key == 'field4':
+            return self.field4
+        else:
+            raise KeyError('not a valid field')
+
+    def __len__(self) -> int:
+        return 2
+
+    def __iter__(self) -> Iterator[int]:
+        return iter((self.field1, self.field2, self._field3, self.field4))
+
+
+def test_iterable_of_non_indexable_iterables():
+    rows = [NonIndexableRowObject(1, 2, 3, 4),
+            NonIndexableRowObject(5, 6, 7, 8)]
+    columns = (tf.Column('col1', attrib='field1'),
+               tf.Column('col2', attrib='field2'),
+               tf.Column('col3', attrib='field3'),
                tf.Column('col4', attrib='field4'))
     table = tf.generate_table(rows, columns)
     assert table == EXPECTED_WITH_HEADERS
