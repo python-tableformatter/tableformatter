@@ -1,4 +1,8 @@
-## 0.1.5 (TBD)
+## 0.1.6 (April 9, 2021)
+* Bug Fixes
+    * Fixed exception when handling row objects that are iterable but are not numerically indexable sequences
+
+## 0.1.5 (April 27, 2020)
 * Bug fixes
     * Fixes issue with handling namedtuples as row ojbects
 * Documentation
