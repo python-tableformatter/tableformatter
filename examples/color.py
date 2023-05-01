@@ -3,7 +3,7 @@
 """
 Simple demonstration of TableFormatter with some colored output.
 """
-import tableformatter as tf
+import tableformatter as tablefmt
 from tableformatter import generate_table
 
 try:
@@ -30,4 +30,4 @@ rows = [('A1', 'A2', 'A3', 'A4'),
 columns = ('Col1', 'Col2', 'Col3', 'Col4')
 
 print("Table with colorful alternating rows")
-print(generate_table(rows, columns, grid_style=tf.AlternatingRowGrid(BACK_GREEN, BACK_BLUE)))
+print(generate_table(rows, columns, grid_style=tablefmt.AlternatingRowGrid(BACK_GREEN, BACK_BLUE)))

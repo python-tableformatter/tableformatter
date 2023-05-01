@@ -3,8 +3,10 @@
 """
 Demonstration of field and object formatters for both object and tuple based table entries
 """
-import tableformatter as tf
+import tableformatter as tablefmt
 from typing import Tuple
+
+import tableformatter.formatters
 
 
 class MyRowObject(object):
@@ -80,7 +82,7 @@ def tag_row_obj(row_obj: MyRowObject) -> dict:
     optional properties"""
     opts = dict()
     if row_obj.field4 % 4 == 0:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
+        opts[tablefmt.TableFormatter.ROW_OPT_TEXT_COLOR] = tablefmt.TableColors.TEXT_COLOR_GREEN
     return opts
 
 rows = [MyRowObject(None, None, 17, 4),
@@ -91,16 +93,16 @@ rows = [MyRowObject(None, None, 17, 4),
         MyRowObject(1234567890, 1234567890, 7, 5),
         MyRowObject(1234567890123, 1234567890123, 7, 5)]
 
-columns = (tf.Column('First', width=20, attrib='field1', formatter=tf.FormatBytes(),
-                     cell_halign=tf.ColumnAlignment.AlignRight),
-           tf.Column('Second', attrib='field2', formatter=tf.FormatCommas(),
-                     cell_halign=tf.ColumnAlignment.AlignRight),
-           tf.Column('Num 1', width=3, attrib='get_field3'),
-           tf.Column('Num 2', attrib='field4'),
-           tf.Column('Multiplied', obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1', formatter=tableformatter.formatters.FormatBytes(),
+                           cell_halign=tablefmt.ColumnAlignment.AlignRight),
+           tablefmt.Column('Second', attrib='field2', formatter=tableformatter.formatters.FormatCommas(),
+                           cell_halign=tablefmt.ColumnAlignment.AlignRight),
+           tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+           tablefmt.Column('Num 2', attrib='field4'),
+           tablefmt.Column('Multiplied', obj_formatter=multiply))
 
 print("Formatters on object-based row entries")
-print(tf.generate_table(rows, columns, row_tagger=tag_row_obj))
+print(tablefmt.generate_table(rows, columns, row_tagger=tag_row_obj))
 
 
 def tag_row_tuples(row_tuple: Tuple) -> dict:
@@ -112,7 +114,7 @@ def tag_row_tuples(row_tuple: Tuple) -> dict:
     """
     opts = dict()
     if len(row_tuple) >= 4 and row_tuple[3] % 4 == 0:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_GREEN
+        opts[tablefmt.TableFormatter.ROW_OPT_TEXT_COLOR] = tablefmt.TableColors.TEXT_COLOR_GREEN
     return opts
 
 
@@ -124,11 +126,11 @@ rows = [(None, None, 17, 4, None),
         (1234567890, 1234567890, 7, 5, None),
         (1234567890123, 1234567890123, 7, 5, None)]
 
-columns = (tf.Column('First', width=20, formatter=tf.FormatBytes(), cell_halign=tf.ColumnAlignment.AlignRight),
-           tf.Column('Second', formatter=tf.FormatCommas(), cell_halign=tf.ColumnAlignment.AlignRight),
-           tf.Column('Num 1'),
-           tf.Column('Num 2', formatter=int2word),
-           tf.Column('Multiplied', obj_formatter=multiply_tuple))
+columns = (tablefmt.Column('First', width=20, formatter=tableformatter.formatters.FormatBytes(), cell_halign=tablefmt.ColumnAlignment.AlignRight),
+           tablefmt.Column('Second', formatter=tableformatter.formatters.FormatCommas(), cell_halign=tablefmt.ColumnAlignment.AlignRight),
+           tablefmt.Column('Num 1'),
+           tablefmt.Column('Num 2', formatter=int2word),
+           tablefmt.Column('Multiplied', obj_formatter=multiply_tuple))
 
 print("Formatters on tuple-based row entries")
-print(tf.generate_table(rows, columns, row_tagger=tag_row_tuples))
+print(tablefmt.generate_table(rows, columns, row_tagger=tag_row_tuples))

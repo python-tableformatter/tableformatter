@@ -6,11 +6,11 @@ Unit testing of tableformatter with simple cases
 """
 import pytest
 
-import tableformatter as tf
+import tableformatter as tablefmt
 
 # Make the test results reproducible regardless of what color libraries are installed
-tf.TableColors.set_color_library('none')
-tf.set_default_grid(tf.AlternatingRowGrid('', ''))
+tablefmt.TableColors.set_color_library('none')
+tablefmt.set_default_grid(tablefmt.AlternatingRowGrid('', ''))
 
 WITH_HEADER = '''
 ╔══════╤══════╤══════╤══════╗
@@ -61,7 +61,7 @@ def test_basic_table(rows):
 ║ D1 │ D2 │ D3 │ D4 ║
 ╚════╧════╧════╧════╝
 '''.lstrip('\n')
-    table = tf.generate_table(rows)
+    table = tablefmt.generate_table(rows)
     assert table == expected
 
 def test_basic_transposed(rows):
@@ -75,7 +75,7 @@ def test_basic_transposed(rows):
 ║ A4 │ B4 │ C4 │ D4 ║
 ╚════╧════╧════╧════╝
 '''.lstrip('\n')
-    table = tf.generate_table(rows, transpose=True)
+    table = tablefmt.generate_table(rows, transpose=True)
     assert table == expected
 
 def test_basic_fancy_grid(rows):
@@ -92,7 +92,7 @@ def test_basic_fancy_grid(rows):
 ║ D1 │ D2 │ D3 │ D4 ║
 ╚════╧════╧════╧════╝
 '''.lstrip('\n')
-    table = tf.generate_table(rows, grid_style=tf.FancyGrid())
+    table = tablefmt.generate_table(rows, grid_style=tablefmt.FancyGrid())
     assert table == expected
 
 def test_basic_sparse_grid(rows):
@@ -103,15 +103,15 @@ def test_basic_sparse_grid(rows):
      B2         
  C1  C2  C3  C4 
  D1  D2  D3  D4 \n                \n'''.lstrip('\n')
-    table = tf.generate_table(rows, grid_style=tf.SparseGrid())
+    table = tablefmt.generate_table(rows, grid_style=tablefmt.SparseGrid())
     assert table == expected
 
 def test_table_with_header(rows, cols):
-    table = tf.generate_table(rows, cols)
+    table = tablefmt.generate_table(rows, cols)
     assert table == WITH_HEADER
 
 def test_table_with_header_transposed(rows, cols):
-    table = tf.generate_table(rows, cols, transpose=True)
+    table = tablefmt.generate_table(rows, cols, transpose=True)
     assert table == HEADER_TRANSPOSED
 
 def test_table_with_header_transposed_fancy(rows, cols):
@@ -128,7 +128,7 @@ def test_table_with_header_transposed_fancy(rows, cols):
 ║ Col4 ║ A4 │ B4 │ C4 │ D4 ║
 ╚══════╩════╧════╧════╧════╝
 '''.lstrip('\n')
-    table = tf.generate_table(rows, cols, grid_style=tf.FancyGrid(), transpose=True)
+    table = tablefmt.generate_table(rows, cols, grid_style=tablefmt.FancyGrid(), transpose=True)
     assert table == expected
 
 def test_table_with_header_transposed_sparse(rows, cols):
@@ -139,7 +139,7 @@ def test_table_with_header_transposed_sparse(rows, cols):
            B2         
  Col3  A3  B3  C3  D3 
  Col4  A4  B4  C4  D4 \n                      \n'''.lstrip('\n')
-    table = tf.generate_table(rows, cols, grid_style=tf.SparseGrid(), transpose=True)
+    table = tablefmt.generate_table(rows, cols, grid_style=tablefmt.SparseGrid(), transpose=True)
     assert table == expected
 
 
@@ -166,18 +166,18 @@ def obj_rows():
 
 @pytest.fixture
 def obj_cols():
-    columns = (tf.Column('Col1', attrib='field1'),
-               tf.Column('Col2', attrib='field2'),
-               tf.Column('Col3', attrib='get_field3'),
-               tf.Column('Col4', attrib='field4'))
+    columns = (tablefmt.Column('Col1', attrib='field1'),
+               tablefmt.Column('Col2', attrib='field2'),
+               tablefmt.Column('Col3', attrib='get_field3'),
+               tablefmt.Column('Col4', attrib='field4'))
     return columns
 
 def test_object_table_with_header(obj_rows, obj_cols):
-    table = tf.generate_table(obj_rows, obj_cols)
+    table = tablefmt.generate_table(obj_rows, obj_cols)
     assert table == WITH_HEADER
 
 def test_object_table_transposed(obj_rows, obj_cols):
-    table = tf.generate_table(obj_rows, obj_cols, transpose=True)
+    table = tablefmt.generate_table(obj_rows, obj_cols, transpose=True)
     assert table == HEADER_TRANSPOSED
 
 def test_object_table_fancy_grid(obj_rows, obj_cols):
@@ -196,7 +196,7 @@ def test_object_table_fancy_grid(obj_rows, obj_cols):
 ║ D1   │ D2   │ D3   │ D4   ║
 ╚══════╧══════╧══════╧══════╝
 '''.lstrip('\n')
-    table = tf.generate_table(obj_rows, obj_cols, grid_style=tf.FancyGrid())
+    table = tablefmt.generate_table(obj_rows, obj_cols, grid_style=tablefmt.FancyGrid())
     assert table == expected
 
 def test_object_table_sparse_grid(obj_rows, obj_cols):
@@ -207,14 +207,14 @@ def test_object_table_sparse_grid(obj_rows, obj_cols):
      B2         
  C1  C2  C3  C4 
  D1  D2  D3  D4 \n                \n'''.lstrip('\n')
-    table = tf.generate_table(obj_rows, obj_cols, grid_style=tf.SparseGrid())
+    table = tablefmt.generate_table(obj_rows, obj_cols, grid_style=tablefmt.SparseGrid())
     assert table == expected
 
 def test_object_table_columns_rearranged(obj_rows):
-    cols2 = (tf.Column('Col1', attrib='field3'),
-             tf.Column('Col2', attrib='field2'),
-             tf.Column('Col3', attrib='field1'),
-             tf.Column('Col4', attrib='field4'))
+    cols2 = (tablefmt.Column('Col1', attrib='field3'),
+             tablefmt.Column('Col2', attrib='field2'),
+             tablefmt.Column('Col3', attrib='field1'),
+             tablefmt.Column('Col4', attrib='field4'))
     expected = '''
 ╔══════╤══════╤══════╤══════╗
 ║ Col1 │ Col2 │ Col3 │ Col4 ║
@@ -227,7 +227,7 @@ def test_object_table_columns_rearranged(obj_rows):
 ║      │ D2   │ D1   │ D4   ║
 ╚══════╧══════╧══════╧══════╝
 '''.lstrip('\n')
-    table = tf.generate_table(obj_rows, cols2)
+    table = tablefmt.generate_table(obj_rows, cols2)
     assert table == expected
 
 

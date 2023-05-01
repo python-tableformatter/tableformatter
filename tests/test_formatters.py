@@ -6,11 +6,13 @@ Unit testing of tableformatter with simple cases
 """
 import pytest
 
-import tableformatter as tf
+import tableformatter as tablefmt
 
 # Make the test results reproducible regardless of what color libraries are installed
-tf.TableColors.set_color_library('none')
-tf.set_default_grid(tf.AlternatingRowGrid('', '', ''))
+import tableformatter.formatters
+
+tablefmt.TableColors.set_color_library('none')
+tablefmt.set_default_grid(tablefmt.AlternatingRowGrid('', '', ''))
 
 
 class MyRowObject(object):
@@ -108,14 +110,14 @@ def test_fmt_obj_rows():
             MyRowObject(1234567890, 1234567890, 7, 5),
             MyRowObject(1234567890123, 1234567890123, 7, 5)]
 
-    columns = (tf.Column('First', width=20, attrib='field1', formatter=tf.FormatBytes(),
-                         cell_halign=tf.ColumnAlignment.AlignRight),
-               tf.Column('Second', attrib='field2', formatter=tf.FormatCommas(),
-                         cell_halign=tf.ColumnAlignment.AlignRight),
-               tf.Column('Num 1', width=3, attrib='get_field3'),
-               tf.Column('Num 2', attrib='field4'),
-               tf.Column('Multiplied', obj_formatter=multiply))
-    table = tf.generate_table(rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1', formatter=tableformatter.formatters.FormatBytes(),
+                               cell_halign=tablefmt.ColumnAlignment.AlignRight),
+               tablefmt.Column('Second', attrib='field2', formatter=tableformatter.formatters.FormatCommas(),
+                               cell_halign=tablefmt.ColumnAlignment.AlignRight),
+               tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+               tablefmt.Column('Num 2', attrib='field4'),
+               tablefmt.Column('Multiplied', obj_formatter=multiply))
+    table = tablefmt.generate_table(rows, columns)
     assert table == expected
 
 
@@ -142,12 +144,12 @@ def test_fmt_tuple_rows():
             (1234567890, 1234567890, 7, 5, None),
             (1234567890123, 1234567890123, 7, 5, None)]
 
-    columns = (tf.Column('First', width=20, formatter=tf.FormatBytes(), cell_halign=tf.ColumnAlignment.AlignRight),
-               tf.Column('Second', formatter=tf.FormatCommas(), cell_halign=tf.ColumnAlignment.AlignRight),
-               tf.Column('Num 1'),
-               tf.Column('Num 2', formatter=int2word),
-               tf.Column('Multiplied', obj_formatter=multiply_tuple))
+    columns = (tablefmt.Column('First', width=20, formatter=tableformatter.formatters.FormatBytes(), cell_halign=tablefmt.ColumnAlignment.AlignRight),
+               tablefmt.Column('Second', formatter=tableformatter.formatters.FormatCommas(), cell_halign=tablefmt.ColumnAlignment.AlignRight),
+               tablefmt.Column('Num 1'),
+               tablefmt.Column('Num 2', formatter=int2word),
+               tablefmt.Column('Multiplied', obj_formatter=multiply_tuple))
 
-    table = tf.generate_table(rows, columns)
+    table = tablefmt.generate_table(rows, columns)
 
     assert table == expected

@@ -4,7 +4,7 @@
 Simple demonstration of TableFormatter with a list of tuples as table entries.
 TableFormatter will automatically expand the row height to handle multi-line entries.
 """
-import tableformatter as tf
+import tableformatter as tablefmt
 from tableformatter import generate_table
 
 rows = [('A1', 'A2', 'A3', 'A4'),
@@ -23,10 +23,10 @@ print(generate_table(rows, transpose=True))
 
 
 print("Basic Table, FancyGrid:")
-print(generate_table(rows, grid_style=tf.FancyGrid()))
+print(generate_table(rows, grid_style=tablefmt.FancyGrid()))
 
 print("Basic Table, SparseGrid:")
-print(generate_table(rows, grid_style=tf.SparseGrid()))
+print(generate_table(rows, grid_style=tablefmt.SparseGrid()))
 
 print("Table with header, AlteratingRowGrid:")
 print(generate_table(rows, columns))
@@ -37,7 +37,7 @@ print(generate_table(rows, columns, transpose=True))
 
 
 print("Table with header, transposed, FancyGrid:")
-print(generate_table(rows, columns, grid_style=tf.FancyGrid(), transpose=True))
+print(generate_table(rows, columns, grid_style=tablefmt.FancyGrid(), transpose=True))
 
 print("Table with header, transposed, SparseGrid:")
-print(generate_table(rows, columns, grid_style=tf.SparseGrid(), transpose=True))
+print(generate_table(rows, columns, grid_style=tablefmt.SparseGrid(), transpose=True))

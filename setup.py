@@ -43,7 +43,7 @@ EXTRAS_REQUIRE = {
 }
 
 PACKAGE_DATA = {
-    '': ['py.typed']
+    'tableformatter': ['py.typed']
 }
 
 setup(

@@ -26,9 +26,11 @@ import argparse
 from typing import Tuple
 
 import cmd2
-import tableformatter as tf
+import tableformatter as tablefmt
 
 # Configure colors for when users chooses the "-c" flag to enable color in the table output
+import tableformatter.formatters
+
 try:
     from colored import bg
 
@@ -73,15 +75,17 @@ for row in EXAMPLE_ITERABLE_DATA:
     row.append(row[-2] / row[-1])
 
 # Column headers plus optional formatting info for each column
-COLUMNS = [tf.Column('City', width=11, header_halign=tf.ColumnAlignment.AlignCenter),
-           tf.Column('Province', header_halign=tf.ColumnAlignment.AlignCenter),
+COLUMNS = [tablefmt.Column('City', width=11, header_halign=tablefmt.ColumnAlignment.AlignCenter),
+           tablefmt.Column('Province', header_halign=tablefmt.ColumnAlignment.AlignCenter),
            'Country',  # NOTE: If you don't need any special effects, you can just pass a string
-           tf.Column('Continent', cell_halign=tf.ColumnAlignment.AlignCenter),
-           tf.Column('Population', cell_halign=tf.ColumnAlignment.AlignRight, formatter=tf.FormatCommas()),
-           tf.Column('Area (km²)', width=7, header_halign=tf.ColumnAlignment.AlignCenter,
-                     cell_halign=tf.ColumnAlignment.AlignRight, formatter=two_dec),
-           tf.Column('Pop. Density (/km²)', width=12, header_halign=tf.ColumnAlignment.AlignCenter,
-                     cell_halign=tf.ColumnAlignment.AlignRight, formatter=no_dec),
+           tablefmt.Column('Continent', cell_halign=tablefmt.ColumnAlignment.AlignCenter),
+           tablefmt.Column('Population',
+                           cell_halign=tablefmt.ColumnAlignment.AlignRight,
+                           formatter=tableformatter.formatters.FormatCommas()),
+           tablefmt.Column('Area (km²)', width=7, header_halign=tablefmt.ColumnAlignment.AlignCenter,
+                           cell_halign=tablefmt.ColumnAlignment.AlignRight, formatter=two_dec),
+           tablefmt.Column('Pop. Density (/km²)', width=12, header_halign=tablefmt.ColumnAlignment.AlignCenter,
+                           cell_halign=tablefmt.ColumnAlignment.AlignRight, formatter=no_dec),
            ]
 
 
@@ -123,16 +127,19 @@ for city_data in EXAMPLE_ITERABLE_DATA:
 # If table entries are python objects, all columns must be defined with the object attribute to query for each field
 #   - attributes can be fields or functions. If a function is provided, the formatter will automatically call
 #     the function to retrieve the value
-OBJ_COLS = [tf.Column('City', attrib='city', header_halign=tf.ColumnAlignment.AlignCenter),
-            tf.Column('Province', attrib='province', header_halign=tf.ColumnAlignment.AlignCenter),
-            tf.Column('Country', attrib='country'),
-            tf.Column('Continent', attrib='continent', cell_halign=tf.ColumnAlignment.AlignCenter),
-            tf.Column('Population', attrib='get_population', cell_halign=tf.ColumnAlignment.AlignRight,
-                      formatter=tf.FormatCommas()),
-            tf.Column('Area (km²)', attrib='get_area', width=7, header_halign=tf.ColumnAlignment.AlignCenter,
-                      cell_halign=tf.ColumnAlignment.AlignRight, formatter=two_dec),
-            tf.Column('Pop. Density (/km²)', width=12, header_halign=tf.ColumnAlignment.AlignCenter,
-                      cell_halign=tf.ColumnAlignment.AlignRight, obj_formatter=pop_density),
+OBJ_COLS = [tablefmt.Column('City', attrib='city', header_halign=tablefmt.ColumnAlignment.AlignCenter),
+            tablefmt.Column('Province', attrib='province', header_halign=tablefmt.ColumnAlignment.AlignCenter),
+            tablefmt.Column('Country', attrib='country'),
+            tablefmt.Column('Continent', attrib='continent', cell_halign=tablefmt.ColumnAlignment.AlignCenter),
+            tablefmt.Column('Population', attrib='get_population', cell_halign=tablefmt.ColumnAlignment.AlignRight,
+                            formatter=tableformatter.formatters.FormatCommas()),
+            tablefmt.Column('Area (km²)',
+                            attrib='get_area',
+                            width=7,
+                            header_halign=tablefmt.ColumnAlignment.AlignCenter,
+                            cell_halign=tablefmt.ColumnAlignment.AlignRight, formatter=two_dec),
+            tablefmt.Column('Pop. Density (/km²)', width=12, header_halign=tablefmt.ColumnAlignment.AlignCenter,
+                            cell_halign=tablefmt.ColumnAlignment.AlignRight, obj_formatter=pop_density),
             ]
 
 EXTREMELY_HIGH_POULATION_DENSITY = 25000
@@ -142,7 +149,7 @@ def high_density_tuples(row_tuple: Tuple) -> dict:
     """Color rows with extremely high population density red."""
     opts = dict()
     if len(row_tuple) >= 7 and row_tuple[6] > EXTREMELY_HIGH_POULATION_DENSITY:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_RED
+        opts[tablefmt.TableFormatter.ROW_OPT_TEXT_COLOR] = tablefmt.TableColors.TEXT_COLOR_RED
     return opts
 
 
@@ -150,7 +157,7 @@ def high_density_objs(row_obj: CityInfo) -> dict:
     """Color rows with extremely high population density red."""
     opts = dict()
     if float(pop_density(row_obj)) > EXTREMELY_HIGH_POULATION_DENSITY:
-        opts[tf.TableFormatter.ROW_OPT_TEXT_COLOR] = tf.TableColors.TEXT_COLOR_RED
+        opts[tablefmt.TableFormatter.ROW_OPT_TEXT_COLOR] = tablefmt.TableColors.TEXT_COLOR_RED
     return opts
 
 
@@ -170,11 +177,11 @@ class TableDisplay(cmd2.Cmd):
         :param row_stylist: function to determine how each row gets styled
         """
         if grid_args.color:
-            grid = tf.AlternatingRowGrid(BACK_PRI, BACK_ALT)
+            grid = tablefmt.AlternatingRowGrid(BACK_PRI, BACK_ALT)
         elif grid_args.fancy:
-            grid = tf.FancyGrid()
+            grid = tablefmt.FancyGrid()
         elif grid_args.sparse:
-            grid = tf.SparseGrid()
+            grid = tablefmt.SparseGrid()
         else:
             grid = None
 
@@ -182,8 +189,8 @@ class TableDisplay(cmd2.Cmd):
         if grid_args.transpose:
             transpose = True
 
-        formatted_table = tf.generate_table(rows=rows, columns=columns, grid_style=grid, row_tagger=row_stylist,
-                                            transpose=transpose)
+        formatted_table = tablefmt.generate_table(rows=rows, columns=columns, grid_style=grid, row_tagger=row_stylist,
+                                                  transpose=transpose)
         self.ppaged(formatted_table, chop=True)
 
     table_parser = argparse.ArgumentParser()

@@ -3,7 +3,7 @@
 """
 Demonstration of all of the per-Column customizations that are available.
 """
-import tableformatter as tf
+import tableformatter as tablefmt
 
 
 class MyRowObject(object):
@@ -75,70 +75,70 @@ rows = [MyRowObject('Longer text that will trigger the column wrapping', 'A2', 5
         MyRowObject('D1', 'D2', 7, 5)]
 
 
-columns = (tf.Column('First', width=20, attrib='field1'),
-           tf.Column('Second', attrib='field2'),
-           tf.Column('Num 1', width=3, attrib='get_field3'),
-           tf.Column('Num 2', attrib='field4'),
-           tf.Column('Multiplied', obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1'),
+           tablefmt.Column('Second', attrib='field2'),
+           tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+           tablefmt.Column('Num 2', attrib='field4'),
+           tablefmt.Column('Multiplied', obj_formatter=multiply))
 print("First: Wrapped\nMultiplied: object formatter")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))
 
 
-columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.WRAP_WITH_INDENT),
-           tf.Column('Second', attrib='field2'),
-           tf.Column('Num 1', width=3, attrib='get_field3', header_halign=tf.ColumnAlignment.AlignCenter),
-           tf.Column('Num 2', attrib='field4'),
-           tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.WRAP_WITH_INDENT),
+           tablefmt.Column('Second', attrib='field2'),
+           tablefmt.Column('Num 1', width=3, attrib='get_field3', header_halign=tablefmt.ColumnAlignment.AlignCenter),
+           tablefmt.Column('Num 2', attrib='field4'),
+           tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
 print("First: Wrapped with indent\nNum 1: header align center")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))
 
 
-columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.WRAP_WITH_INDENT,
+columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.WRAP_WITH_INDENT,
                      wrap_prefix='>>> '),
-           tf.Column('Second', attrib='field2', cell_halign=tf.ColumnAlignment.AlignCenter),
-           tf.Column('Num 1', width=3, attrib='get_field3', header_halign=tf.ColumnAlignment.AlignRight),
-           tf.Column('Num 2', attrib='field4', header_valign=tf.ColumnAlignment.AlignTop),
-           tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
+           tablefmt.Column('Second', attrib='field2', cell_halign=tablefmt.ColumnAlignment.AlignCenter),
+           tablefmt.Column('Num 1', width=3, attrib='get_field3', header_halign=tablefmt.ColumnAlignment.AlignRight),
+           tablefmt.Column('Num 2', attrib='field4', header_valign=tablefmt.ColumnAlignment.AlignTop),
+           tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
 print("First: Wrapped with indent, custom wrap prefix\n"
       "Second: Header align center\n"
       "Num 1: header align right\n"
       "Num 2: header align top")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))
 
 
-columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_END),
-           tf.Column('Second', attrib='field2', cell_padding=3),
-           tf.Column('Num 1', width=3, attrib='get_field3'),
-           tf.Column('Num 2', attrib='field4'),
-           tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_END),
+           tablefmt.Column('Second', attrib='field2', cell_padding=3),
+           tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+           tablefmt.Column('Num 2', attrib='field4'),
+           tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
 print("First: Truncate end\n"
       "Second: cell padding 3 spaces")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))
 
 
-columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_FRONT),
-           tf.Column('Second', attrib='field2', cell_padding=5, cell_halign=tf.ColumnAlignment.AlignRight),
-           tf.Column('Num 1', attrib='get_field3'),
-           tf.Column('Num 2', attrib='field4'),
-           tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_FRONT),
+           tablefmt.Column('Second', attrib='field2', cell_padding=5, cell_halign=tablefmt.ColumnAlignment.AlignRight),
+           tablefmt.Column('Num 1', attrib='get_field3'),
+           tablefmt.Column('Num 2', attrib='field4'),
+           tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
 print("First; Truncate Front\n"
       "Second: cell align right, cell padding=5")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))
 
 
-columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_MIDDLE),
-           tf.Column('Second', attrib='field2'),
-           tf.Column('Num 1', attrib='get_field3'),
-           tf.Column('Num 2', attrib='field4', cell_valign=tf.ColumnAlignment.AlignBottom),
-           tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_MIDDLE),
+           tablefmt.Column('Second', attrib='field2'),
+           tablefmt.Column('Num 1', attrib='get_field3'),
+           tablefmt.Column('Num 2', attrib='field4', cell_valign=tablefmt.ColumnAlignment.AlignBottom),
+           tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
 print("First: Truncate Middle\nNum 2: cell align bottom")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))
 
 
-columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_HARD),
-           tf.Column('Second', attrib='field2'),
-           tf.Column('Num 1', attrib='get_field3'),
-           tf.Column('Num 2', attrib='field4', formatter=int2word),
-           tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_HARD),
+           tablefmt.Column('Second', attrib='field2'),
+           tablefmt.Column('Num 1', attrib='get_field3'),
+           tablefmt.Column('Num 2', attrib='field4', formatter=int2word),
+           tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
 print("First: Truncate Hard\nNum 2: Field formatter")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))

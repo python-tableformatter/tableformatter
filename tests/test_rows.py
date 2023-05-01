@@ -6,12 +6,12 @@ Unit testing of tableformatter with simple cases
 """
 import pytest
 
-import tableformatter as tf
+import tableformatter as tablefmt
 from collections import namedtuple
 
 # Make the test results reproducible regardless of what color libraries are installed
-tf.TableColors.set_color_library('none')
-tf.set_default_grid(tf.AlternatingRowGrid('', '', ''))
+tablefmt.TableColors.set_color_library('none')
+tablefmt.set_default_grid(tablefmt.AlternatingRowGrid('', '', ''))
 
 
 class MyRowObject(object):
@@ -110,19 +110,19 @@ def test_obj_rows():
 ║ D1                   │ D2     │ 7   │ 5     │ 35         ║
 ╚══════════════════════╧════════╧═════╧═══════╧════════════╝
 '''.lstrip('\n')
-    rows = [tf.Row(MyRowObject('Longer text that will trigger the column wrapping', 'A2', 5, 56),
+    rows = [tablefmt.Row(MyRowObject('Longer text that will trigger the column wrapping', 'A2', 5, 56),
                    text_color='R'),
-            tf.Row(MyRowObject('B1', 'B2\nB2\nB2', 23, 8),
+            tablefmt.Row(MyRowObject('B1', 'B2\nB2\nB2', 23, 8),
                    text_color='G'),
             MyRowObject('C1', 'C2', 4, 9),
             MyRowObject('D1', 'D2', 7, 5)]
 
-    columns = (tf.Column('First', width=20, attrib='field1'),
-               tf.Column('Second', attrib='field2'),
-               tf.Column('Num 1', width=3, attrib='get_field3'),
-               tf.Column('Num 2', attrib='field4'),
-               tf.Column('Multiplied', obj_formatter=multiply))
-    table = tf.generate_table(rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1'),
+               tablefmt.Column('Second', attrib='field2'),
+               tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+               tablefmt.Column('Num 2', attrib='field4'),
+               tablefmt.Column('Multiplied', obj_formatter=multiply))
+    table = tablefmt.generate_table(rows, columns)
     assert table == expected
 
 
@@ -142,19 +142,19 @@ def test_namedtuple_rows():
 ║ D1                   │ D2     │ 7   │ 5     │ 35         ║
 ╚══════════════════════╧════════╧═════╧═══════╧════════════╝
 '''.lstrip('\n')
-    rows = [tf.Row(NamedTupleRow('Longer text that will trigger the column wrapping', 'A2', 5, 56),
+    rows = [tablefmt.Row(NamedTupleRow('Longer text that will trigger the column wrapping', 'A2', 5, 56),
                    text_color='R'),
-            tf.Row(NamedTupleRow('B1', 'B2\nB2\nB2', 23, 8),
+            tablefmt.Row(NamedTupleRow('B1', 'B2\nB2\nB2', 23, 8),
                    text_color='G'),
             NamedTupleRow('C1', 'C2', 4, 9),
             NamedTupleRow('D1', 'D2', 7, 5)]
 
-    columns = (tf.Column('First', width=20, attrib='field1'),
-               tf.Column('Second', attrib='field2'),
-               tf.Column('Num 1', width=3, attrib='field3'),
-               tf.Column('Num 2', attrib='field4'),
-               tf.Column('Multiplied', obj_formatter=multiply_named_tuple))
-    table = tf.generate_table(rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1'),
+               tablefmt.Column('Second', attrib='field2'),
+               tablefmt.Column('Num 1', width=3, attrib='field3'),
+               tablefmt.Column('Num 2', attrib='field4'),
+               tablefmt.Column('Multiplied', obj_formatter=multiply_named_tuple))
+    table = tablefmt.generate_table(rows, columns)
     assert table == expected
 
 
@@ -172,19 +172,19 @@ def test_tuple_rows():
 ╚══════════════════════╧════════╧═══════╧═══════════╧════════════╝
 '''.lstrip('\n')
 
-    rows = [tf.Row('Longer text that will trigger the column wrapping', 'A2', 5, 56, None,
+    rows = [tablefmt.Row('Longer text that will trigger the column wrapping', 'A2', 5, 56, None,
                    text_color='R'),
-            tf.Row('B1', 'B2\nB2\nB2', 23, 8, None,
+            tablefmt.Row('B1', 'B2\nB2\nB2', 23, 8, None,
                    text_color='G'),
             ('C1', 'C2', 4, 9, None),
             ('D1', 'D2', 7, 5, None)]
 
-    columns = (tf.Column('First', width=20, wrap_mode=tf.WrapMode.TRUNCATE_HARD),
-               tf.Column('Second'),
-               tf.Column('Num 1'),
-               tf.Column('Num 2', formatter=int2word),
-               tf.Column('Multiplied', obj_formatter=multiply_tuple))
+    columns = (tablefmt.Column('First', width=20, wrap_mode=tablefmt.WrapMode.TRUNCATE_HARD),
+               tablefmt.Column('Second'),
+               tablefmt.Column('Num 1'),
+               tablefmt.Column('Num 2', formatter=int2word),
+               tablefmt.Column('Multiplied', obj_formatter=multiply_tuple))
 
-    table = tf.generate_table(rows, columns)
+    table = tablefmt.generate_table(rows, columns)
 
     assert table == expected

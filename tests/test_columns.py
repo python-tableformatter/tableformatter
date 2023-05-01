@@ -4,11 +4,11 @@ Unit testing the variety of column customizations available
 """
 import pytest
 
-import tableformatter as tf
+import tableformatter as tablefmt
 
 # Make the test results reproducible regardless of what color libraries are installed
-tf.TableColors.set_color_library('none')
-tf.set_default_grid(tf.AlternatingRowGrid('', ''))
+tablefmt.TableColors.set_color_library('none')
+tablefmt.set_default_grid(tablefmt.AlternatingRowGrid('', ''))
 
 
 class MyRowObject(object):
@@ -84,12 +84,12 @@ def obj_rows():
 
 
 def test_wrapped_object_formatter(obj_rows):
-    columns = (tf.Column('First', width=20, attrib='field1'),
-               tf.Column('Second', attrib='field2'),
-               tf.Column('Num 1', width=3, attrib='get_field3'),
-               tf.Column('Num 2', attrib='field4'),
-               tf.Column('Multiplied', obj_formatter=multiply))
-    table = tf.generate_table(obj_rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1'),
+               tablefmt.Column('Second', attrib='field2'),
+               tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+               tablefmt.Column('Num 2', attrib='field4'),
+               tablefmt.Column('Multiplied', obj_formatter=multiply))
+    table = tablefmt.generate_table(obj_rows, columns)
     expected = '''
 ╔══════════════════════╤════════╤═════╤═══════╤════════════╗
 ║                      │        │ Num │       │            ║
@@ -109,12 +109,12 @@ def test_wrapped_object_formatter(obj_rows):
 
 
 def test_wrapped_indent_center_header(obj_rows):
-    columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.WRAP_WITH_INDENT),
-               tf.Column('Second', attrib='field2'),
-               tf.Column('Num 1', width=3, attrib='get_field3', header_halign=tf.ColumnAlignment.AlignCenter),
-               tf.Column('Num 2', attrib='field4'),
-               tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-    table = tf.generate_table(obj_rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.WRAP_WITH_INDENT),
+               tablefmt.Column('Second', attrib='field2'),
+               tablefmt.Column('Num 1', width=3, attrib='get_field3', header_halign=tablefmt.ColumnAlignment.AlignCenter),
+               tablefmt.Column('Num 2', attrib='field4'),
+               tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
+    table = tablefmt.generate_table(obj_rows, columns)
     expected = '''
 ╔══════════════════════╤════════╤═════╤═══════╤════════════╗
 ║                      │        │ Num │       │            ║
@@ -134,13 +134,13 @@ def test_wrapped_indent_center_header(obj_rows):
 
 
 def test_wrapped_custom_indent_header_right_header_top(obj_rows):
-    columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.WRAP_WITH_INDENT,
+    columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.WRAP_WITH_INDENT,
                          wrap_prefix='>>> '),
-               tf.Column('Second', attrib='field2', cell_halign=tf.ColumnAlignment.AlignCenter),
-               tf.Column('Num 1', width=3, attrib='get_field3', header_halign=tf.ColumnAlignment.AlignRight),
-               tf.Column('Num 2', attrib='field4', header_valign=tf.ColumnAlignment.AlignTop),
-               tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-    table = tf.generate_table(obj_rows, columns)
+               tablefmt.Column('Second', attrib='field2', cell_halign=tablefmt.ColumnAlignment.AlignCenter),
+               tablefmt.Column('Num 1', width=3, attrib='get_field3', header_halign=tablefmt.ColumnAlignment.AlignRight),
+               tablefmt.Column('Num 2', attrib='field4', header_valign=tablefmt.ColumnAlignment.AlignTop),
+               tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
+    table = tablefmt.generate_table(obj_rows, columns)
     expected = '''
 ╔══════════════════════╤════════╤═════╤═══════╤════════════╗
 ║                      │        │ Num │ Num 2 │            ║
@@ -160,12 +160,12 @@ def test_wrapped_custom_indent_header_right_header_top(obj_rows):
 
 
 def test_truncate_end_custom_padding(obj_rows):
-    columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_END),
-               tf.Column('Second', attrib='field2', cell_padding=3),
-               tf.Column('Num 1', width=3, attrib='get_field3'),
-               tf.Column('Num 2', attrib='field4'),
-               tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-    table = tf.generate_table(obj_rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_END),
+               tablefmt.Column('Second', attrib='field2', cell_padding=3),
+               tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+               tablefmt.Column('Num 2', attrib='field4'),
+               tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
+    table = tablefmt.generate_table(obj_rows, columns)
     expected = '''
 ╔══════════════════════╤════════════╤═════╤═══════╤════════════╗
 ║                      │            │ Num │       │            ║
@@ -183,12 +183,12 @@ def test_truncate_end_custom_padding(obj_rows):
 
 
 def test_truncate_front_custom_padding_cell_align_right(obj_rows):
-    columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_FRONT),
-               tf.Column('Second', attrib='field2', cell_padding=5, cell_halign=tf.ColumnAlignment.AlignRight),
-               tf.Column('Num 1', attrib='get_field3'),
-               tf.Column('Num 2', attrib='field4'),
-               tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-    table = tf.generate_table(obj_rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_FRONT),
+               tablefmt.Column('Second', attrib='field2', cell_padding=5, cell_halign=tablefmt.ColumnAlignment.AlignRight),
+               tablefmt.Column('Num 1', attrib='get_field3'),
+               tablefmt.Column('Num 2', attrib='field4'),
+               tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
+    table = tablefmt.generate_table(obj_rows, columns)
     expected = '''
 ╔══════════════════════╤════════════════╤═══════╤═══════╤════════════╗
 ║ First                │     Second     │ Num 1 │ Num 2 │ Multiplied ║
@@ -205,12 +205,12 @@ def test_truncate_front_custom_padding_cell_align_right(obj_rows):
 
 
 def test_truncate_middle_cell_align_bottom(obj_rows):
-    columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_MIDDLE),
-               tf.Column('Second', attrib='field2'),
-               tf.Column('Num 1', attrib='get_field3'),
-               tf.Column('Num 2', attrib='field4', cell_valign=tf.ColumnAlignment.AlignBottom),
-               tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-    table = tf.generate_table(obj_rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_MIDDLE),
+               tablefmt.Column('Second', attrib='field2'),
+               tablefmt.Column('Num 1', attrib='get_field3'),
+               tablefmt.Column('Num 2', attrib='field4', cell_valign=tablefmt.ColumnAlignment.AlignBottom),
+               tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
+    table = tablefmt.generate_table(obj_rows, columns)
     expected = '''
 ╔══════════════════════╤════════╤═══════╤═══════╤════════════╗
 ║ First                │ Second │ Num 1 │ Num 2 │ Multiplied ║
@@ -227,12 +227,12 @@ def test_truncate_middle_cell_align_bottom(obj_rows):
 
 
 def test_truncate_hard_field_formatter(obj_rows):
-    columns = (tf.Column('First', width=20, attrib='field1', wrap_mode=tf.WrapMode.TRUNCATE_HARD),
-               tf.Column('Second', attrib='field2'),
-               tf.Column('Num 1', attrib='get_field3'),
-               tf.Column('Num 2', attrib='field4', formatter=int2word),
-               tf.Column('Multiplied', attrib=None, obj_formatter=multiply))
-    table = tf.generate_table(obj_rows, columns)
+    columns = (tablefmt.Column('First', width=20, attrib='field1', wrap_mode=tablefmt.WrapMode.TRUNCATE_HARD),
+               tablefmt.Column('Second', attrib='field2'),
+               tablefmt.Column('Num 1', attrib='get_field3'),
+               tablefmt.Column('Num 2', attrib='field4', formatter=int2word),
+               tablefmt.Column('Multiplied', attrib=None, obj_formatter=multiply))
+    table = tablefmt.generate_table(obj_rows, columns)
     expected = '''
 ╔══════════════════════╤════════╤═══════╤═══════════╤════════════╗
 ║ First                │ Second │ Num 1 │ Num 2     │ Multiplied ║

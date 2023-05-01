@@ -4,7 +4,7 @@
 Demonstration of per-row customizations (currently only text foreground color)
 Also demonstrates use of object formatter with both tuple-based and object-base row entries
 """
-import tableformatter as tf
+import tableformatter as tablefmt
 
 
 class MyRowObject(object):
@@ -75,37 +75,37 @@ def int2word(num, separator="-"):
         print("num out of range")
 
 
-rows = [tf.Row(MyRowObject('Longer text that will trigger the column wrapping', 'A2', 5, 56),
-               text_color=tf.TableColors.TEXT_COLOR_RED),
-        tf.Row(MyRowObject('B1', 'B2\nB2\nB2', 23, 8),
-               text_color=tf.TableColors.TEXT_COLOR_GREEN),
+rows = [tablefmt.Row(MyRowObject('Longer text that will trigger the column wrapping', 'A2', 5, 56),
+               text_color=tablefmt.TableColors.TEXT_COLOR_RED),
+        tablefmt.Row(MyRowObject('B1', 'B2\nB2\nB2', 23, 8),
+               text_color=tablefmt.TableColors.TEXT_COLOR_GREEN),
         MyRowObject('C1', 'C2', 4, 9),
         MyRowObject('D1', 'D2', 7, 5)]
 
 
-columns = (tf.Column('First', width=20, attrib='field1'),
-           tf.Column('Second', attrib='field2'),
-           tf.Column('Num 1', width=3, attrib='get_field3'),
-           tf.Column('Num 2', attrib='field4'),
-           tf.Column('Multiplied', obj_formatter=multiply))
+columns = (tablefmt.Column('First', width=20, attrib='field1'),
+           tablefmt.Column('Second', attrib='field2'),
+           tablefmt.Column('Num 1', width=3, attrib='get_field3'),
+           tablefmt.Column('Num 2', attrib='field4'),
+           tablefmt.Column('Multiplied', obj_formatter=multiply))
 print("Per-row customizations with object-based row entries")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))
 
 
-rows = [tf.Row('Longer text that will trigger the column wrapping', 'A2', 5, 56, None,
-               text_color=tf.TableColors.TEXT_COLOR_RED),
-        tf.Row('B1', 'B2\nB2\nB2', 23, 8, None,
-               text_color=tf.TableColors.TEXT_COLOR_GREEN),
+rows = [tablefmt.Row('Longer text that will trigger the column wrapping', 'A2', 5, 56, None,
+               text_color=tablefmt.TableColors.TEXT_COLOR_RED),
+        tablefmt.Row('B1', 'B2\nB2\nB2', 23, 8, None,
+               text_color=tablefmt.TableColors.TEXT_COLOR_GREEN),
         ('C1', 'C2', 4, 9, None),
         ('D1', 'D2', 7, 5, None)]
 
 
-columns = (tf.Column('First', width=20, wrap_mode=tf.WrapMode.TRUNCATE_HARD),
-           tf.Column('Second'),
-           tf.Column('Num 1'),
-           tf.Column('Num 2', formatter=int2word),
-           tf.Column('Multiplied', obj_formatter=multiply_tuple))
+columns = (tablefmt.Column('First', width=20, wrap_mode=tablefmt.WrapMode.TRUNCATE_HARD),
+           tablefmt.Column('Second'),
+           tablefmt.Column('Num 1'),
+           tablefmt.Column('Num 2', formatter=int2word),
+           tablefmt.Column('Multiplied', obj_formatter=multiply_tuple))
 
 
 print("Per-row customizations with tuple-based row entries")
-print(tf.generate_table(rows, columns))
+print(tablefmt.generate_table(rows, columns))

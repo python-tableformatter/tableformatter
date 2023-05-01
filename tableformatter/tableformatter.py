@@ -7,7 +7,7 @@ import enum
 import itertools
 import re
 import textwrap as textw
-from typing import List, Iterable, Optional, Tuple, Union, Callable, Sequence
+from typing import Callable, Iterable, List, Optional, Sequence, Tuple, Union
 
 from wcwidth import wcswidth
 
@@ -42,7 +42,7 @@ __version__ = '0.1.4'
 ELLIPSIS = '…'
 
 
-def _text_wrap(text: str, width: int=70) -> List[str]:
+def _text_wrap(text: str, width: int = 70) -> List[str]:
     """Wrap a single paragraph of text, returning a list of wrapped lines.
 
     Reformat the single paragraph in 'text' so it fits in lines of no
@@ -287,7 +287,7 @@ def _printable_width(text: str) -> int:
 class TableColors(object):
     """Colors"""
     try:
-        from colored import fg, bg, attr
+        from colored import attr, bg, fg
 
         TEXT_COLOR_WHITE = fg('white')
         TEXT_COLOR_YELLOW = fg(226)
@@ -300,7 +300,7 @@ class TableColors(object):
         RESET = attr('reset')
     except ImportError:
         try:
-            from colorama import Fore, Back, Style
+            from colorama import Back, Fore, Style
 
             TEXT_COLOR_WHITE = Fore.WHITE
             TEXT_COLOR_YELLOW = Fore.LIGHTYELLOW_EX
@@ -326,7 +326,7 @@ class TableColors(object):
     def set_color_library(cls, library_name: str) -> None:
         """Manually override the color library being used."""
         if library_name == 'colored':
-            from colored import fg, bg, attr
+            from colored import attr, bg, fg
 
             cls.TEXT_COLOR_WHITE = fg('white')
             cls.TEXT_COLOR_YELLOW = fg(226)
@@ -338,7 +338,7 @@ class TableColors(object):
             cls.BOLD = attr('bold')
             cls.RESET = attr('reset')
         elif library_name == 'colorama':
-            from colorama import Fore, Back, Style
+            from colorama import Back, Fore, Style
 
             cls.TEXT_COLOR_WHITE = Fore.WHITE
             cls.TEXT_COLOR_YELLOW = Fore.LIGHTYELLOW_EX
@@ -1428,47 +1428,3 @@ class TableFormatter(object):
         return ''
 
 
-class FormatBytes:
-    """Formats a value in bytes into a human readable string"""
-    KB = 1024
-    MB = KB * 1024
-    GB = MB * 1024
-    TB = GB * 1024
-
-    def __call__(self, byte_size: int):
-        """
-        Formats a value in bytes into a human readable string
-        :param byte_size: size in bytes
-        :return: human-readable string
-        """
-        if byte_size is None:
-            return ''
-        if not isinstance(byte_size, int):
-            try:
-                byte_size = int(byte_size)
-            except ValueError:
-                return ''
-
-        decimal_format = '{:.02f}'
-        if byte_size > FormatBytes.TB:
-            out = decimal_format.format(byte_size / FormatBytes.TB) + " TB"
-        elif byte_size > FormatBytes.GB:
-            out = decimal_format.format(byte_size / FormatBytes.GB) + " GB"
-        elif byte_size > FormatBytes.MB:
-            out = decimal_format.format(byte_size / FormatBytes.MB) + " MB"
-        elif byte_size > FormatBytes.KB:
-            out = decimal_format.format(byte_size / FormatBytes.KB) + " KB"
-        else:
-            out = decimal_format.format(byte_size) + "  B"
-
-        return out
-
-
-class FormatCommas:
-    """Formats a number with comma separators"""
-    def __call__(self, number: Union[int, str]):
-        if number is None:
-            return ''
-        if isinstance(number, str):
-            number = int(number)
-        return format(number, ',d')

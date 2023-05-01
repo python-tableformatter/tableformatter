@@ -14,7 +14,7 @@ Many other modules for formatting tabular data require the developer to create a
 objects/data into a structure the formatter can consume.  One relatively novel aspect of tableformatter is the ability to directly
 receive arbitrary Python objects.
 
-[![Screenshot](tf.png)](https://github.com/python-tableformatter/tableformatter/blob/master/tf.png)
+[![Screenshot](tablefmt.png)](https://github.com/python-tableformatter/tableformatter/blob/master/tablefmt.png)
 
 
 ## Main Features
@@ -51,13 +51,13 @@ to this function is ``rows`` which is an Iterable of Iterables such as a list of
 a 2D [numpy](http://www.numpy.org) array.  ``generate_table`` outputs a nicely formatted table:
 
 ```Python
-import tableformatter as tf
+import tableformatter as tablefmt
 
 rows = [('A1', 'A2', 'A3', 'A4'),
         ('B1', 'B2\nB2\nB2', 'B3', 'B4'),
         ('C1', 'C2', 'C3', 'C4'),
         ('D1', 'D2', 'D3', 'D4')]
-print(tf.generate_table(rows))
+print(tablefmt.generate_table(rows))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ║ B1 │ B2 │ B3 │ B4 ║
@@ -93,7 +93,7 @@ The second argument to ``generate_table`` named ``columns`` is optional and defi
 
 ```Python
 cols = ['Col1', 'Col2', 'Col3', 'Col4']
-print(tf.generate_table(rows, cols))
+print(tablefmt.generate_table(rows, cols))
 ╔══════╤══════╤══════╤══════╗
 ║ Col1 │ Col2 │ Col3 │ Col4 ║
 ╠══════╪══════╪══════╪══════╣
@@ -116,7 +116,7 @@ Supported grid sytles are:
 * **SparseGrid** - sparse grid with no lines at all to conserve both vertical and horizontal space
 
 ```Python
-print(tf.generate_table(rows, grid_style=tf.FancyGrid()))
+print(tablefmt.generate_table(rows, grid_style=tablefmt.FancyGrid()))
 ╔════╤════╤════╤════╗
 ║ A1 │ A2 │ A3 │ A4 ║
 ╟────┼────┼────┼────╢
@@ -137,7 +137,7 @@ this and print "rows" up-to-down and "columns" left-to-right then that is easily
 to ``generate_table``:
 
 ```Python
-print(tf.generate_table(rows, cols, transpose=True))
+print(tablefmt.generate_table(rows, cols, transpose=True))
 ╔══════╦════╤════╤════╤════╗
 ║ Col1 ║ A1 │ B1 │ C1 │ D1 ║
 ║ Col2 ║ A2 │ B2 │ C2 │ D2 ║
@@ -186,11 +186,11 @@ Possible alignments are all elements within the ``ColumnAlignment`` enum class:
     * AlignBottom
     
 ```Python
-columns = (tf.Column('Col1', cell_halign=tf.ColumnAlignment.AlignLeft),
-           tf.Column('Col2', cell_halign=tf.ColumnAlignment.AlignRight),
-           tf.Column('Col3', cell_halign=tf.ColumnAlignment.AlignCenter),
-           tf.Column('Col4', cell_valign=tf.ColumnAlignment.AlignBottom))
-print(tf.generate_table(rows, columns))
+columns = (tablefmt.Column('Col1', cell_halign=tablefmt.ColumnAlignment.AlignLeft),
+           tablefmt.Column('Col2', cell_halign=tablefmt.ColumnAlignment.AlignRight),
+           tablefmt.Column('Col3', cell_halign=tablefmt.ColumnAlignment.AlignCenter),
+           tablefmt.Column('Col4', cell_valign=tablefmt.ColumnAlignment.AlignBottom))
+print(tablefmt.generate_table(rows, columns))
 ╔══════╤══════╤══════╤══════╗
 ║ Col1 │ Col2 │ Col3 │ col4 ║
 ╠══════╪══════╪══════╪══════╣
@@ -212,6 +212,8 @@ formatting numbers:
 * FormatCommas - Formats a number with comma separators
 
 ```Python
+import tableformatter.formatters
+
 rows = [(None, None),
         ('123', '123'),
         (123, 123),
@@ -219,19 +221,27 @@ rows = [(None, None),
         (12345678, 12345678),
         (1234567890, 1234567890),
         (1234567890123, 1234567890123)]
-cols = (tf.Column('First', width=20, formatter=tf.FormatBytes(), cell_halign=tf.ColumnAlignment.AlignRight),
-        tf.Column('Second', formatter=tf.FormatCommas(), cell_halign=tf.ColumnAlignment.AlignRight))
-print(tf.generate_table(rows, cols))
+cols = (tablefmt.Column('First', width=20, formatter=tableformatter.formatters.FormatBytes(),
+                        cell_halign=tablefmt.ColumnAlignment.AlignRight),
+        tablefmt.Column('Second', formatter=tableformatter.formatters.FormatCommas(),
+                        cell_halign=tablefmt.ColumnAlignment.AlignRight))
+print(tablefmt.generate_table(rows, cols))
 ╔═══════════╤═══════════════════╗
 ║ First     │ Second            ║
 ╠═══════════╪═══════════════════╣
 ║           │                   ║
-║ 123.00  B │               123 ║
-║ 123.00  B │               123 ║
-║  12.06 KB │            12,345 ║
-║  11.77 MB │        12,345,678 ║
-║   1.15 GB │     1,234,567,890 ║
-║   1.12 TB │ 1,234,567,890,123 ║
+║ 123.00
+B │               123 ║
+║ 123.00
+B │               123 ║
+║  12.06
+KB │            12, 345 ║
+║  11.77
+MB │        12, 345, 678 ║
+║   1.15
+GB │     1, 234, 567, 890 ║
+║   1.12
+TB │ 1, 234, 567, 890, 123 ║
 ╚═══════════╧═══════════════════╝
 ```
 
@@ -247,7 +257,7 @@ and background color of cell contents.
 It is trivial to alternate the background color of each row as follows:
 ```Python
 from colorama import Back
-print(generate_table(rows, cols, grid_style=tf.AlternatingRowGrid(Back.GREEN, Back.BLUE)))
+print(generate_table(rows, cols, grid_style=tablefmt.AlternatingRowGrid(Back.GREEN, Back.BLUE)))
 ```
 See the [cmd2_tables.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/cmd2_tables.py) or 
 [color.py](https://github.com/python-tableformatter/tableformatter/blob/master/examples/color.py) examples for more 
